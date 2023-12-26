@@ -1,6 +1,6 @@
 package org.codebase.events.adapter;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,66 +14,53 @@ import com.bumptech.glide.Glide;
 
 import org.codebase.events.R;
 import org.codebase.events.model.EventsModel;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
-    Activity activity;
-    ArrayList<EventsModel> eventsModels;
+    Context context;
+    ArrayList<EventsModel> eventsList;
 
-    public EventsAdapter(Activity activity, ArrayList<EventsModel> eventsModels) {
-        this.activity = activity;
-        this.eventsModels = eventsModels;
+    public EventsAdapter(Context context, ArrayList<EventsModel> eventsList) {
+        this.context = context;
+        this.eventsList = eventsList;
     }
 
     @NonNull
     @Override
-    public EventsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.events_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
-        EventsModel model = eventsModels.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        EventsModel model = eventsList.get(position);
 
-        Glide.with(activity)
+        Glide.with(context)
                 .load(model.getEventImage())
-                .error(R.drawable.baseline_account_circle_24)
-                .placeholder(R.drawable.baseline_account_circle_24)
-                .into(holder.eventImage);
-
-        Glide.with(activity)
-                .load(model.getUserImage())
                 .error(R.drawable.baseline_image_24)
                 .placeholder(R.drawable.baseline_image_24)
-                .into(holder.personImage);
+                .into(holder.eventImage);
 
-        holder.userName.setText(model.getName());
-
-        holder.eventTopic.setText(model.getEventTopic());
-
+        holder.eventTitle.setText(model.getEventTitle());
     }
 
     @Override
     public int getItemCount() {
-        return eventsModels.size();
+        return eventsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView userName, eventTopic;
-        ImageView personImage, eventImage, chatImage;
+        ImageView eventImage;
+        TextView eventTitle;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            userName = itemView.findViewById(R.id.personName);
-            personImage = itemView.findViewById(R.id.personImage);
             eventImage = itemView.findViewById(R.id.eventImage);
-            eventTopic = itemView.findViewById(R.id.eventTopic);
-            chatImage = itemView.findViewById(R.id.discussionIcon);
+            eventTitle = itemView.findViewById(R.id.eventTitle);
         }
     }
 }

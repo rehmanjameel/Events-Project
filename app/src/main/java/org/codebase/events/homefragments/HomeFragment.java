@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.codebase.events.R;
-import org.codebase.events.adapter.EventsAdapter;
+import org.codebase.events.adapter.HomeEventsAdapter;
 import org.codebase.events.databinding.FragmentHomeBinding;
-import org.codebase.events.model.EventsModel;
+import org.codebase.events.model.HomeEventsModel;
 
 import java.util.ArrayList;
 
@@ -22,8 +22,8 @@ public class HomeFragment extends Fragment {
 
     FragmentHomeBinding binding;
 
-    EventsAdapter eventsAdapter;
-    ArrayList<EventsModel> eventsModelArrayList = new ArrayList<>();
+    HomeEventsAdapter eventsAdapter;
+    ArrayList<HomeEventsModel> eventsModelArrayList = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -31,14 +31,14 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad", R.drawable.newyear, "topic"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad", R.drawable.event1, "topic"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad", R.drawable.football, "topic"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad", R.drawable.palestine, "topic"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad", R.drawable.exhibition, "topic"));
+        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.newyear, "New year"));
+        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.event1, "University event"));
+        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.football, "Football match"));
+        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.palestine, "Palestine situation"));
+        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.exhibition, "Dubai IT exhibition"));
 
         binding.eventsRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
+        eventsAdapter = new HomeEventsAdapter(requireActivity(), eventsModelArrayList);
         binding.eventsRV.setAdapter(eventsAdapter);
 
         return binding.getRoot();

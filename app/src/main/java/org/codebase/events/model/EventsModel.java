@@ -1,20 +1,14 @@
 package org.codebase.events.model;
 
-import android.graphics.drawable.Drawable;
-
 public class EventsModel {
     int id;
-    int userImage;
-    String name;
     int eventImage;
-    String eventTopic;
+    String eventTitle;
 
-    public EventsModel(int id, int userImage, String name, int eventImage, String eventTopic) {
+    public EventsModel(int id, int eventImage, String eventTitle) {
         this.id = id;
-        this.userImage = userImage;
-        this.name = name;
         this.eventImage = eventImage;
-        this.eventTopic = eventTopic;
+        this.eventTitle = eventTitle;
     }
 
     public int getId() {
@@ -25,22 +19,6 @@ public class EventsModel {
         this.id = id;
     }
 
-    public int getUserImage() {
-        return userImage;
-    }
-
-    public void setUserImage(int userImage) {
-        this.userImage = userImage;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getEventImage() {
         return eventImage;
     }
@@ -49,11 +27,11 @@ public class EventsModel {
         this.eventImage = eventImage;
     }
 
-    public String getEventTopic() {
-        return eventTopic;
+    public String getEventTitle() {
+        return eventTitle;
     }
 
-    public void setEventTopic(String eventTopic) {
-        this.eventTopic = eventTopic;
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
     }
 }
