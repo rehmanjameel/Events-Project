@@ -1,5 +1,6 @@
 package org.codebase.events.homefragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.codebase.events.R;
 import org.codebase.events.adapter.EventsAdapter;
@@ -48,6 +50,31 @@ public class EventsFragment extends Fragment {
 
         eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
         binding.eventsRV.setAdapter(eventsAdapter);
+
+        // Set up click listener for the search icon to show the search bar
+        binding.searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSearchView();
+
+            }
+        });
+
+        int id = binding.searchView.getContext()
+                .getResources()
+                .getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = binding.searchView.findViewById(id);
+        textView.setTextColor(Color.WHITE);
+
+        // Set up close button click listener to hide the search bar
+        binding.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                hideSearchView();
+                return false;
+            }
+        });
+
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -98,8 +125,20 @@ public class EventsFragment extends Fragment {
         return binding.getRoot();
     }
 
+    private void showSearchView() {
+        binding.titleTextView.setVisibility(View.INVISIBLE);
+        binding.searchView.setVisibility(View.VISIBLE);
+        binding.searchView.setIconified(false); // Expand the search view
+        binding.searchView.requestFocus(); // Set focus to the search view
+        binding.searchIcon.setVisibility(View.GONE);
+    }
 
-
-
+    private void hideSearchView() {
+        binding.titleTextView.setVisibility(View.VISIBLE);
+        binding.searchView.setVisibility(View.INVISIBLE);
+        binding.searchView.setQuery("", false); // Clear the search query
+        binding.searchView.clearFocus(); // Remove focus from the search view
+        binding.searchIcon.setVisibility(View.VISIBLE);
+    }
 
 }
