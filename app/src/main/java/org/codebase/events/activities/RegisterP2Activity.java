@@ -1,6 +1,7 @@
 package org.codebase.events.activities;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.codebase.events.databinding.ActivityRegisterP2Binding;
@@ -11,10 +12,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.codebase.events.utils.Validator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class RegisterP2Activity extends AppCompatActivity {
@@ -23,6 +31,9 @@ public class RegisterP2Activity extends AppCompatActivity {
 
     List<String> domainsItems = new ArrayList<>();
     List<String> interestsItems = new ArrayList<>();
+    String userName, gender, phoneNo, address, userImage;
+
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +51,17 @@ public class RegisterP2Activity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         });
+
+        if (getIntent() != null) {
+            userName = getIntent().getStringExtra("user_name");
+            gender = getIntent().getStringExtra("gender");
+            phoneNo = getIntent().getStringExtra("phone_no");
+            address = getIntent().getStringExtra("address");
+            userImage = getIntent().getStringExtra("user_image");
+        }
+
+        // create Firebase FireStore instance
+        db = FirebaseFirestore.getInstance();
 
         binding.backArrow.setOnClickListener(view -> {
             startActivity(new Intent(this, RegistrationActivity.class));
@@ -128,6 +150,36 @@ public class RegisterP2Activity extends AppCompatActivity {
     }
 
     private void registerUser(String interestDropDown, String domainsDropDown, String dob, String email, String password) {
+
+        // Create a new user with a first and last name
+        Map<String, Object> user = new HashMap<>();
+        user.put("user_name", userName);
+        user.put("gender", gender);
+        user.put("phone_no", phoneNo);
+        user.put("address", address);
+        user.put("user_image", userImage);
+        user.put("dob", dob);
+        user.put("domain", domainsDropDown);
+        user.put("interest", interestDropDown);
+        user.put("email", email);
+        user.put("password", password);
+
+        // Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error adding document", e);
+                    }
+                });
+
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

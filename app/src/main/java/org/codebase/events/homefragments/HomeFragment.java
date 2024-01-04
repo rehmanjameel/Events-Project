@@ -6,9 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.codebase.events.R;
 import org.codebase.events.adapter.HomeEventsAdapter;
@@ -16,6 +22,8 @@ import org.codebase.events.databinding.FragmentHomeBinding;
 import org.codebase.events.model.HomeEventsModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment {
@@ -24,6 +32,7 @@ public class HomeFragment extends Fragment {
 
     HomeEventsAdapter eventsAdapter;
     ArrayList<HomeEventsModel> eventsModelArrayList = new ArrayList<>();
+    FirebaseFirestore db;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -41,6 +50,14 @@ public class HomeFragment extends Fragment {
         eventsAdapter = new HomeEventsAdapter(requireActivity(), eventsModelArrayList);
         binding.eventsRV.setAdapter(eventsAdapter);
 
+        db = FirebaseFirestore.getInstance();
+
+        addDataToFireStore();
+
         return binding.getRoot();
+    }
+
+    private void addDataToFireStore() {
+
     }
 }
