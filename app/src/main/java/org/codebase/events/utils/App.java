@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +15,8 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+
+import org.codebase.events.activities.MainActivity;
 
 import java.io.File;
 import java.net.URL;
@@ -38,7 +41,6 @@ public class App extends Application {
         super.onCreate();
 
         context = getApplicationContext();
-
 //        createNotificationChannnel();
     }
 

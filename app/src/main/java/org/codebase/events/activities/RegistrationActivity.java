@@ -60,12 +60,15 @@ public class RegistrationActivity extends AppCompatActivity {
         binding.genderDropDown.setAdapter(gendersAdapter);
 
         binding.nextButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, RegisterP2Activity.class));
-//            checkValidation();
+//            Intent intent =  new Intent(this, RegisterP2Activity.class);
+//            startActivity(intent);
+            checkValidation();
         });
 
         binding.backArrow.setOnClickListener(view -> {
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent =  new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         });
 
@@ -95,7 +98,7 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if (gender.isEmpty() || gender.equals("Select")) {
             binding.genderDropDown.setError("Field required");
 
-        } else if (phoneNo.isEmpty() || !Validator.isValidMobile(phoneNo)) {
+        } else if (phoneNo.isEmpty() || !Validator.isValidPakistanMobileNumber(phoneNo)) {
             binding.phoneNoTIET.setError("Field required or Invalid Phone no.");
 
         } else if (address.isEmpty()) {
@@ -104,16 +107,16 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if (imageUri == null) {
             Toast.makeText(this, "Please select the image", Toast.LENGTH_LONG).show();
         } else {
-            Log.e("is it in the ", "else part of validation");
+            Log.e("is it in the ", "else part1 of validation");
             Intent intent = new Intent(this, RegisterP2Activity.class);
             intent.putExtra("user_name", name);
             intent.putExtra("gender", gender);
             intent.putExtra("phone_no", phoneNo);
             intent.putExtra("address", address);
-            intent.putExtra("user_image", imageUri);
+            intent.putExtra("user_image", imageRealPath);
             startActivity(intent);
 
-            binding.progressbar.setVisibility(View.VISIBLE);
+//            binding.progressbar.setVisibility(View.GONE);
         }
     }
 
@@ -221,7 +224,9 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void backPress() {
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent =  new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         finish();
     }
 }

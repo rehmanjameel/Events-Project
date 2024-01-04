@@ -65,8 +65,8 @@
                             android:id="@+id/userNameTIET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="User name"
-                            android:inputType="number"
+                            android:hint="Email"
+                            android:inputType="textEmailAddress"
                             android:maxLines="1"/>
 
                     </com.google.android.material.textfield.TextInputLayout>

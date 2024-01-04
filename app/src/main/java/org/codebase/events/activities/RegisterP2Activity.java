@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.codebase.events.databinding.ActivityRegisterP2Binding;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.codebase.events.utils.Validator;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ public class RegisterP2Activity extends AppCompatActivity {
     ActivityRegisterP2Binding binding;
 
     List<String> domainsItems = new ArrayList<>();
-    List<String> interestsItems = new ArrayList<>();
+    List<String> interestsTopicsList = new ArrayList<>();
     String userName, gender, phoneNo, address, userImage;
 
     FirebaseFirestore db;
@@ -45,11 +47,13 @@ public class RegisterP2Activity extends AppCompatActivity {
         controlBackPress();
 
         setUpDomains();
+
         setUpInterest();
 
         binding.signupId.setOnClickListener(view -> {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+//            startActivity(new Intent(this, MainActivity.class));
+//            finish();
+            checkValidation();
         });
 
         if (getIntent() != null) {
@@ -63,8 +67,14 @@ public class RegisterP2Activity extends AppCompatActivity {
         // create Firebase FireStore instance
         db = FirebaseFirestore.getInstance();
 
+        binding.dobTIL.setEndIconOnClickListener(view -> {
+            clickDatePicker();
+        });
+
         binding.backArrow.setOnClickListener(view -> {
-            startActivity(new Intent(this, RegistrationActivity.class));
+            Intent intent =  new Intent(this, RegistrationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         });
     }
@@ -90,19 +100,29 @@ public class RegisterP2Activity extends AppCompatActivity {
 
     private void setUpInterest() {
         // add interest in array list to show dropdown
-        interestsItems.add("Science and Technology");
-        interestsItems.add("Medicine and Healthcare");
-        interestsItems.add("Business and Entrepreneurship");
-        interestsItems.add("Education");
-        interestsItems.add("Arts and Entertainment");
-        interestsItems.add("Social Sciences");
-        interestsItems.add("Communication and Media");
-        interestsItems.add("Environmental and Sustainability");
-        interestsItems.add("Sports and Recreation");
-        interestsItems.add("Law and Justice");
+        interestsTopicsList.add("Technology");
+        interestsTopicsList.add("Entertainment");
+        interestsTopicsList.add("Books and Literature");
+        interestsTopicsList.add("Sports and Fitness");
+        interestsTopicsList.add("Travel");
+        interestsTopicsList.add("Food and Cooking");
+        interestsTopicsList.add("Fashion and Beauty");
+        interestsTopicsList.add("Art and Creativity");
+        interestsTopicsList.add("Science and Nature");
+        interestsTopicsList.add("Health and Wellness");
+        interestsTopicsList.add("Business and Finance");
+        interestsTopicsList.add("Hobbies and Crafts");
+        interestsTopicsList.add("Politics and Current Affairs");
+        interestsTopicsList.add("Education");
+        interestsTopicsList.add("Parenting");
+        interestsTopicsList.add("Social Causes");
+        interestsTopicsList.add("Pets");
+        interestsTopicsList.add("History and Heritage");
+        interestsTopicsList.add("Family & Relationships");
+        interestsTopicsList.add("Mindfulness and Spirituality");
 
         ArrayAdapter<String> gendersAdapter = new ArrayAdapter<>(this,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, interestsItems);
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, interestsTopicsList);
 
         binding.interestDropDown.setAdapter(gendersAdapter);
     }
@@ -118,34 +138,31 @@ public class RegisterP2Activity extends AppCompatActivity {
 
         if (domainsDropDown.equals("Select") && interestDropDown.equals("Select") && email.isEmpty() && password.isEmpty()
         && dob.isEmpty()) {
-            binding.domainsDropDown.setError("Field required");
-            binding.interestDropDown.setError("Field required");
+            binding.domainsDropDown.setError("Select Domain");
+            binding.interestDropDown.setError("Select Interest");
             binding.dobTIET.setError("Field required");
             binding.emailTIET.setError("Field required");
             binding.passwordTIET.setError("Field required");
 
-
-        } else if (password.isEmpty() || !Validator.isValidPasswordFormat(password)) {
-            binding.passwordTIET.setError("Field required or password is weak");
-
         } else if (interestDropDown.isEmpty() || interestDropDown.equals("Select")) {
             binding.interestDropDown.setError("Field required");
 
-        }
-        else if (domainsDropDown.isEmpty() || domainsDropDown.equals("Select")) {
+        } else if (domainsDropDown.isEmpty() || domainsDropDown.equals("Select")) {
             binding.domainsDropDown.setError("Field required");
 
-        }
-        else if (dob.isEmpty()) {
+        } else if (dob.isEmpty()) {
             binding.dobTIET.setError("Field required");
 
         } else if (email.isEmpty() || !Validator.isValidMail(email)) {
             binding.emailTIET.setError("Field required or Invalid email");
 
+        } else if (password.isEmpty() || !Validator.isValidPasswordFormat(password)) {
+            binding.passwordTIET.setError("Field required or password is weak");
+
         } else {
-            Log.e("is it in the ", "else part of validation");
-            registerUser(interestDropDown, domainsDropDown, dob, email, password);
+            Log.e("is it in the ", "else part2 of validation");
             binding.progressbar.setVisibility(View.VISIBLE);
+            registerUser(interestDropDown, domainsDropDown, dob, email, password);
         }
     }
 
@@ -171,17 +188,20 @@ public class RegisterP2Activity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        binding.progressbar.setVisibility(View.GONE);
+                        Intent intent = new Intent(RegisterP2Activity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        binding.progressbar.setVisibility(View.GONE);
                         Log.w("TAG", "Error adding document", e);
                     }
                 });
-
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
     }
 
     private void controlBackPress() {
@@ -194,8 +214,29 @@ public class RegisterP2Activity extends AppCompatActivity {
     }
 
     private void backPress() {
-        startActivity(new Intent(this, RegistrationActivity.class));
+        Intent intent =  new Intent(this, RegistrationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         finish();
     }
 
+    private void clickDatePicker() {
+        final Calendar myCalendar = Calendar.getInstance();
+        int year = myCalendar.get(Calendar.YEAR);
+        int month = myCalendar.get(Calendar.MONTH);
+        int day = myCalendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                    String selectedDate = selectedDayOfMonth + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                    binding.dobTIET.setText(selectedDate);
+                },
+                year, month, day
+        );
+
+//        myCalendar.add(Calendar.YEAR, 18);
+//        datePickerDialog.getDatePicker().setMaxDate(myCalendar.getTimeInMillis());
+        datePickerDialog.show();
+    }
 }
