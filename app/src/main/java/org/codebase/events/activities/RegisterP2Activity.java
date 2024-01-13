@@ -8,15 +8,26 @@ import org.codebase.events.databinding.ActivityRegisterP2Binding;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.codebase.events.utils.Validator;
 
@@ -26,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class RegisterP2Activity extends AppCompatActivity {
 
@@ -35,13 +47,22 @@ public class RegisterP2Activity extends AppCompatActivity {
     List<String> interestsTopicsList = new ArrayList<>();
     String userName, gender, phoneNo, address, userImage;
 
+    private FirebaseAuth mAuth;
     FirebaseFirestore db;
+    // instance for firebase storage and StorageReference
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterP2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mAuth = FirebaseAuth.getInstance();
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         // control the device back button click
         controlBackPress();
@@ -72,7 +93,7 @@ public class RegisterP2Activity extends AppCompatActivity {
         });
 
         binding.backArrow.setOnClickListener(view -> {
-            Intent intent =  new Intent(this, RegistrationActivity.class);
+            Intent intent = new Intent(this, RegistrationActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
@@ -137,7 +158,7 @@ public class RegisterP2Activity extends AppCompatActivity {
 
 
         if (domainsDropDown.equals("Select") && interestDropDown.equals("Select") && email.isEmpty() && password.isEmpty()
-        && dob.isEmpty()) {
+                && dob.isEmpty()) {
             binding.domainsDropDown.setError("Select Domain");
             binding.interestDropDown.setError("Select Interest");
             binding.dobTIET.setError("Field required");
@@ -162,11 +183,106 @@ public class RegisterP2Activity extends AppCompatActivity {
         } else {
             Log.e("is it in the ", "else part2 of validation");
             binding.progressbar.setVisibility(View.VISIBLE);
-            registerUser(interestDropDown, domainsDropDown, dob, email, password);
+            saveEmailPassword(email, password, interestDropDown, domainsDropDown, dob);
         }
     }
 
-    private void registerUser(String interestDropDown, String domainsDropDown, String dob, String email, String password) {
+    private void saveEmailPassword(String email, String password, String interestDropDown, String domainsDropDown, String dob) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                uploadImage(email, interestDropDown, domainsDropDown, dob);
+                            }
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            binding.progressbar.setVisibility(View.GONE);
+
+                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(RegisterP2Activity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+    }
+
+    private void uploadImage(String email, String interestDropDown, String domainsDropDown, String dob) {
+        // Defining the child of storageReference
+        if (userImage != null) {
+            StorageReference ref
+                    = storageReference.child("images/" + UUID.randomUUID().toString());
+
+            // adding listeners on upload
+            // or failure of image
+            ref.putFile(Uri.parse(userImage))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            taskSnapshot.getMetadata().getPath();
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    registerUser(interestDropDown, domainsDropDown, dob, email, uri.toString());
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                }
+                            });
+                            // Image uploaded successfully
+                            // Dismiss dialog
+//                                progressDialog.dismiss();
+                            Toast.makeText(RegisterP2Activity.this,
+                                    "Image Uploaded!!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            // Error, Image not uploaded
+//                        progressDialog.dismiss();
+                            Toast.makeText(RegisterP2Activity.this,
+                                    "Failed " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+//                .addOnProgressListener(
+//                        new OnProgressListener<UploadTask.TaskSnapshot>() {
+//
+//                            // Progress Listener for loading
+//                            // percentage on the dialog box
+//                            @Override
+//                            public void onProgress(
+//                                    UploadTask.TaskSnapshot taskSnapshot)
+//                            {
+//                                double progress
+//                                        = (100.0
+//                                        * taskSnapshot.getBytesTransferred()
+//                                        / taskSnapshot.getTotalByteCount());
+//                                progressDialog.setMessage(
+//                                        "Uploaded "
+//                                                + (int)progress + "%");
+//                            }
+//                        });
+
+        } else {
+            Toast.makeText(this, "Something went wrong on uploading image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void registerUser(String interestDropDown, String domainsDropDown, String dob, String email, String imageUri) {
 
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
@@ -174,12 +290,11 @@ public class RegisterP2Activity extends AppCompatActivity {
         user.put("gender", gender);
         user.put("phone_no", phoneNo);
         user.put("address", address);
-        user.put("user_image", userImage);
+        user.put("user_image", imageUri);
         user.put("dob", dob);
         user.put("domain", domainsDropDown);
         user.put("interest", interestDropDown);
         user.put("email", email);
-        user.put("password", password);
 
         // Add a new document with a generated ID
         db.collection("users")
@@ -189,7 +304,7 @@ public class RegisterP2Activity extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
                         binding.progressbar.setVisibility(View.GONE);
-                        Intent intent = new Intent(RegisterP2Activity.this, MainActivity.class);
+                        Intent intent = new Intent(RegisterP2Activity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
@@ -205,7 +320,7 @@ public class RegisterP2Activity extends AppCompatActivity {
     }
 
     private void controlBackPress() {
-       getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 backPress();
@@ -214,7 +329,7 @@ public class RegisterP2Activity extends AppCompatActivity {
     }
 
     private void backPress() {
-        Intent intent =  new Intent(this, RegistrationActivity.class);
+        Intent intent = new Intent(this, RegistrationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();

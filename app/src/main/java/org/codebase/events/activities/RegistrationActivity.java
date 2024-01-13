@@ -113,7 +113,7 @@ public class RegistrationActivity extends AppCompatActivity {
             intent.putExtra("gender", gender);
             intent.putExtra("phone_no", phoneNo);
             intent.putExtra("address", address);
-            intent.putExtra("user_image", imageRealPath);
+            intent.putExtra("user_image", imageUri.toString());
             startActivity(intent);
 
 //            binding.progressbar.setVisibility(View.GONE);

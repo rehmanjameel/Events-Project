@@ -1,5 +1,7 @@
 package org.codebase.events.homefragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,15 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.codebase.events.R;
+import org.codebase.events.activities.ProfileActivity;
 import org.codebase.events.adapter.HomeEventsAdapter;
 import org.codebase.events.databinding.FragmentHomeBinding;
 import org.codebase.events.model.HomeEventsModel;
+import org.codebase.events.utils.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +44,18 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        Glide.with(this)
+                .load(Uri.parse(App.getString("user_image")).buildUpon().scheme("https").build())
+                .centerCrop()
+                .error(R.drawable.baseline_account_circle_24)
+                .placeholder(R.drawable.baseline_account_circle_24)
+                .into(binding.profilePicture);
+
+        binding.profilePicture.setOnClickListener(view -> {
+            Intent intent = new Intent(requireActivity(), ProfileActivity.class);
+            startActivity(intent);
+        });
 
         eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.newyear, "New year"));
         eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.event1, "University event"));
