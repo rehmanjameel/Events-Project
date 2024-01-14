@@ -1,6 +1,7 @@
 package org.codebase.events.adapter;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 
 import org.codebase.events.R;
 import org.codebase.events.model.HomeEventsModel;
@@ -38,21 +45,52 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
     public void onBindViewHolder(@NonNull HomeEventsAdapter.ViewHolder holder, int position) {
         HomeEventsModel model = eventsModels.get(position);
 
+        RequestOptions requestOptions = new RequestOptions()
+                .timeout(60000); // Set the timeout to 60 seconds (adjust as needed)
+
         Glide.with(activity)
-                .load(model.getEventImage())
+                .load(model.getImageUrl())
                 .error(R.drawable.baseline_account_circle_24)
                 .placeholder(R.drawable.baseline_account_circle_24)
+                .apply(requestOptions)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        // Handle load failure, show placeholder or error message
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        // Image loaded successfully
+                        return false;
+                    }
+                })
                 .into(holder.eventImage);
 
         Glide.with(activity)
                 .load(model.getUserImage())
                 .error(R.drawable.baseline_image_24)
                 .placeholder(R.drawable.baseline_image_24)
+                .apply(requestOptions)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        // Handle load failure, show placeholder or error message
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        // Image loaded successfully
+                        return false;
+                    }
+                })
                 .into(holder.personImage);
+//
+        holder.userName.setText(model.getUserName());
 
-        holder.userName.setText(model.getName());
-
-        holder.eventTopic.setText(model.getEventTopic());
+        holder.eventTopic.setText(model.getDescription());
 
     }
 

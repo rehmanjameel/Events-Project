@@ -64,7 +64,7 @@ public class EventsFragment extends Fragment {
                 .getResources()
                 .getIdentifier("android:id/search_src_text", null, null);
         TextView textView = binding.searchView.findViewById(id);
-        textView.setTextColor(Color.WHITE);
+//        textView.setTextColor(Color.WHITE);
 
         // Set up close button click listener to hide the search bar
         binding.searchView.setOnCloseListener(new SearchView.OnCloseListener() {

@@ -1,57 +1,57 @@
 package org.codebase.events.model;
 
 public class HomeEventsModel {
-    int id;
-    int userImage;
-    String name;
-    int eventImage;
-    String eventTopic;
+    private String userId;
+    private String userName;  // You can include the user's name in the Post model for convenience
+    private String userImage; // You can include the user's image URL in the Post model for convenience
+    private String description;
+    private String imageUrl;
 
-    public HomeEventsModel(int id, int userImage, String name, int eventImage, String eventTopic) {
-        this.id = id;
+    public HomeEventsModel(String userId, String userName, String userImage, String description, String imageUrl) {
+        this.userId = userId;
+        this.userName = userName;
         this.userImage = userImage;
-        this.name = name;
-        this.eventImage = eventImage;
-        this.eventTopic = eventTopic;
+        this.description = description;
+        this.imageUrl = imageUrl;
     }
 
-    public int getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getUserImage() {
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserImage() {
         return userImage;
     }
 
-    public void setUserImage(int userImage) {
+    public void setUserImage(String userImage) {
         this.userImage = userImage;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getEventImage() {
-        return eventImage;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setEventImage(int eventImage) {
-        this.eventImage = eventImage;
-    }
-
-    public String getEventTopic() {
-        return eventTopic;
-    }
-
-    public void setEventTopic(String eventTopic) {
-        this.eventTopic = eventTopic;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

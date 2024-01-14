@@ -126,8 +126,9 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("TAG", document.getId() + " => " + document.getData() + document.get("email"));
+                                Log.e("TAG", document.getId() + " => " + document.getData() + document.get("email"));
 
+                                App.saveString("document_id", document.getId());
                                 Log.e("email", document.get("user_name") + ",.," + document.get("email"));
                                 App.saveString("uer_name", String.valueOf(document.get("user_name")));
                                 App.saveString("gender", String.valueOf(document.get("gender")));

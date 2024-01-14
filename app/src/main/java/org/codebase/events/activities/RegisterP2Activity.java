@@ -48,10 +48,10 @@ public class RegisterP2Activity extends AppCompatActivity {
     String userName, gender, phoneNo, address, userImage;
 
     private FirebaseAuth mAuth;
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
     // instance for firebase storage and StorageReference
-    FirebaseStorage storage;
-    StorageReference storageReference;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
