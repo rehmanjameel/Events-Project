@@ -9,12 +9,6 @@ public class Validator {
         return Pattern.compile(EMAIL_STRING).matcher(email).matches();
     }
 
-//    public static boolean isValidMobile(String phone) {
-//        String phoneValidation = "^(\\+91|0)?[6789]\\d{9}$";
-////        String phoneValidation = "^((\\+92)|(0092))-{0,1}\\d{3}-{0,1}\\d{7}$|^\\d{11}$|^\\d{4}-\\d{7}$";
-//        return Pattern.compile(phoneValidation).matcher(phone).matches();
-//    }
-
     public static boolean isValidPakistanMobileNumber(String phoneNumber) {
         // Valid formats: +923001234567, 03001234567, 3001234567
         String PHONE_NUMBER_STRING = "^(\\+92|92|0)?[3456789]\\d{9}$";

@@ -88,17 +88,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-//        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.newyear, "New year"));
-//        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.event1, "University event"));
-//        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.football, "Football match"));
-//        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.palestine, "Palestine situation"));
-//        eventsModelArrayList.add(new HomeEventsModel(0, R.drawable.profile, "Ahmad", R.drawable.exhibition, "Dubai IT exhibition"));
-
         binding.eventsRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-
-        String userId = currentUser.getUid();
-        String providerId = currentUser.getProviderId();
-        Log.e("user id, provider id", userId +",.,." + providerId);
 
         binding.createEventButton.setOnClickListener(view -> {
             Intent intent = new Intent(requireActivity(), CreateEventActivity.class);
