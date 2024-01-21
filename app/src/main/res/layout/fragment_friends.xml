@@ -31,4 +31,12 @@
         app:spanCount="2"
         android:layout_below="@id/topLayout"/>
 
+    <TextView
+        android:id="@+id/noDataText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Data found"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
 </RelativeLayout>

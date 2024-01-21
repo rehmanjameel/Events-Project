@@ -30,18 +30,26 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
 
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maha"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Usama"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Wahid"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maham"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Asma"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maha"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Usama"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Wahid"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maham"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Asma"));
 
         GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), 2);
         binding.eventsRV.setLayoutManager(layoutManager);
 
-        eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
-        binding.eventsRV.setAdapter(eventsAdapter);
+        if (eventsModelArrayList.size() == 0) {
+            binding.eventsRV.setVisibility(View.GONE);
+            binding.noDataText.setVisibility(View.VISIBLE);
+        } else {
+            binding.eventsRV.setVisibility(View.VISIBLE);
+            binding.noDataText.setVisibility(View.GONE);
+
+            eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
+            binding.eventsRV.setAdapter(eventsAdapter);
+        }
 
         return binding.getRoot();
     }

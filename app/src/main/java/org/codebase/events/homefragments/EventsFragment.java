@@ -38,18 +38,26 @@ public class EventsFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentEventsBinding.inflate(inflater, container, false);
 
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.exhibition, "Event"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.newyear, "Event"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.palestine, "Event"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.football, "Event"));
-        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.exhibition, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.newyear, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.palestine, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.football, "Event"));
+//        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
 
         GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), 2);
         binding.eventsRV.setLayoutManager(layoutManager);
 
-        eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
-        binding.eventsRV.setAdapter(eventsAdapter);
+        if (eventsModelArrayList.size() == 0) {
+            binding.eventsRV.setVisibility(View.GONE);
+            binding.noDataText.setVisibility(View.VISIBLE);
+
+        } else {
+            binding.eventsRV.setVisibility(View.VISIBLE);
+            binding.noDataText.setVisibility(View.GONE);
+            eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
+            binding.eventsRV.setAdapter(eventsAdapter);
+        }
 
         // Set up click listener for the search icon to show the search bar
         binding.searchIcon.setOnClickListener(new View.OnClickListener() {
