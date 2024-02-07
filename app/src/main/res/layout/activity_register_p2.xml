@@ -61,18 +61,26 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/interestMenu"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:hint="Interests">
+                        android:hint="Interests"
+                        app:endIconDrawable="@drawable/baseline_arrow_drop_down_24"
+                        app:endIconMode="custom">
 
-                        <AutoCompleteTextView
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/interestDropDown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:text="Select" />
+                            />
+<!--                        <MultiAutoCompleteTextView-->
+                        <!--                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+
+                        <!--                            android:id="@+id/interestDropDown"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:inputType="none"-->
+<!--                            android:text="Select" />-->
 
                     </com.google.android.material.textfield.TextInputLayout>
 

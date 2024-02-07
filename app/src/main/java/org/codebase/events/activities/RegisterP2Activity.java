@@ -2,17 +2,20 @@ package org.codebase.events.activities;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.codebase.events.databinding.ActivityRegisterP2Binding;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +36,7 @@ import org.codebase.events.utils.Validator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +50,8 @@ public class RegisterP2Activity extends AppCompatActivity {
     List<String> domainsItems = new ArrayList<>();
     List<String> interestsTopicsList = new ArrayList<>();
     String userName, gender, phoneNo, address, userImage;
-
+    boolean[] selectedLanguage;
+    ArrayList<Integer> langList = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     // instance for firebase storage and StorageReference
@@ -120,6 +125,7 @@ public class RegisterP2Activity extends AppCompatActivity {
     }
 
     private void setUpInterest() {
+
         // add interest in array list to show dropdown
         interestsTopicsList.add("Technology");
         interestsTopicsList.add("Entertainment");
@@ -142,10 +148,114 @@ public class RegisterP2Activity extends AppCompatActivity {
         interestsTopicsList.add("Family & Relationships");
         interestsTopicsList.add("Mindfulness and Spirituality");
 
-        ArrayAdapter<String> gendersAdapter = new ArrayAdapter<>(this,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, interestsTopicsList);
+        // initialize selected language array
+        selectedLanguage = new boolean[interestsTopicsList.size()];
 
-        binding.interestDropDown.setAdapter(gendersAdapter);
+        binding.interestMenu.setEndIconOnClickListener(view -> {
+            alertDialog();
+        });
+
+//        ArrayAdapter<String> gendersAdapter = new ArrayAdapter<>(this,
+//                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, interestsTopicsList);
+
+//        binding.interestDropDown.setAdapter(gendersAdapter);
+//        binding.interestDropDown.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+    }
+
+    private void alertDialog() {
+        // Initialize alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterP2Activity.this);
+
+        // set title
+        builder.setTitle("Select Language");
+
+        // set dialog non cancelable
+        builder.setCancelable(false);
+
+//        builder.setMultiChoiceItems(interestsTopicsList, selectedLanguage, new DialogInterface.OnMultiChoiceClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+//                // check condition
+//                if (b) {
+//                    // when checkbox selected
+//                    // Add position  in lang list
+//                    langList.add(i);
+//                    // Sort array list
+//                    Collections.sort(langList);
+//                } else {
+//                    // when checkbox unselected
+//                    // Remove position from langList
+//                    langList.remove(Integer.valueOf(i));
+//                }
+//            }
+//        });
+
+        builder.setMultiChoiceItems(
+                interestsTopicsList.toArray(new CharSequence[interestsTopicsList.size()]),
+                selectedLanguage,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                        // check condition
+                        if (b) {
+                            // when checkbox selected
+                            // Add position in lang list
+                            langList.add(i);
+                            // Sort array list
+                            Collections.sort(langList);
+                        } else {
+                            // when checkbox unselected
+                            // Remove position from langList
+                            langList.remove(Integer.valueOf(i));
+                        }
+                    }
+                });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Initialize string builder
+                StringBuilder stringBuilder = new StringBuilder();
+                // use for loop
+                for (int j = 0; j < langList.size(); j++) {
+                    // concat array value
+                    stringBuilder.append(interestsTopicsList.get(langList.get(j)));
+                    // check condition
+                    if (j != langList.size() - 1) {
+                        // When j value  not equal
+                        // to lang list size - 1
+                        // add comma
+                        stringBuilder.append(", ");
+                    }
+                }
+                // set text on textView
+                binding.interestDropDown.setText(stringBuilder.toString());
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // dismiss dialog
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // use for loop
+                for (int j = 0; j < selectedLanguage.length; j++) {
+                    // remove all selection
+                    selectedLanguage[j] = false;
+                    // clear language list
+                    langList.clear();
+                    // clear text view value
+                    binding.interestDropDown.setText("");
+                }
+            }
+        });
+        // show dialog
+        builder.show();
     }
 
     private void checkValidation() {
@@ -157,8 +267,9 @@ public class RegisterP2Activity extends AppCompatActivity {
         String password = Objects.requireNonNull(binding.passwordTIET.getText()).toString();
 
 
-        if (domainsDropDown.equals("Select") && interestDropDown.equals("Select") && email.isEmpty() && password.isEmpty()
-                && dob.isEmpty()) {
+        if (domainsDropDown.equals("Select") && interestDropDown.equals("Select")
+//                && email.isEmpty()
+               && password.isEmpty() && dob.isEmpty()) {
             binding.domainsDropDown.setError("Select Domain");
             binding.interestDropDown.setError("Select Interest");
             binding.dobTIET.setError("Field required");
