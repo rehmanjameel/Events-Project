@@ -8,7 +8,7 @@
         android:maxSdkVersion="32" />
 
     <application
-        android:name=".utils.App"
+        android:name="pk.cust.events.utils.App"
         android:allowBackup="true"
         android:allowClearUserData="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -23,19 +23,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.CreateEventActivity"
+            android:name="pk.cust.events.activities.CreateEventActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ProfileActivity"
+            android:name="pk.cust.events.activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.RegisterP2Activity"
+            android:name="pk.cust.events.activities.RegisterP2Activity"
             android:exported="false" />
         <activity
-            android:name=".activities.RegistrationActivity"
+            android:name="pk.cust.events.activities.RegistrationActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name="pk.cust.events.activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name="pk.cust.events.activities.MainActivity"
             android:exported="false">
 
             <!-- <intent-filter> -->

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LoginActivity">
+    tools:context="pk.cust.events.activities.LoginActivity">
 
     <View
         android:id="@+id/topView"
@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/log_in"
         android:gravity="center"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -126,11 +126,13 @@
                             android:textSize="14sp"/>
 
                         <TextView
+                            style="?attr/selectableItemBackgroundBorderless"
                             android:id="@+id/signupId"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="Signup"
+                            android:padding="10dp"
                             android:textColor="@color/purple_700"
                             android:textSize="14sp" />
 

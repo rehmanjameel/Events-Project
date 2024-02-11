@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="org.codebase.events.homefragments.HomeFragment"
+        android:name="pk.cust.events.homefragments.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/eventsFragment"
-        android:name="org.codebase.events.homefragments.EventsFragment"
+        android:name="pk.cust.events.homefragments.EventsFragment"
         android:label="fragment_events"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/chatRoomFragment"
-        android:name="org.codebase.events.homefragments.ChatRoomFragment"
+        android:name="pk.cust.events.homefragments.ChatRoomFragment"
         android:label="fragment_chat_room"
         tools:layout="@layout/fragment_chat_room" />
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="org.codebase.events.homefragments.NotificationsFragment"
+        android:name="pk.cust.events.homefragments.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/friendsFragment"
-        android:name="org.codebase.events.homefragments.FriendsFragment"
+        android:name="pk.cust.events.homefragments.FriendsFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_friends" />
 </navigation>

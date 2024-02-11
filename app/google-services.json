@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1060698767263",
-    "project_id": "eventsapp-ac175",
-    "storage_bucket": "eventsapp-ac175.appspot.com"
+    "project_number": "681263502209",
+    "project_id": "events-4ac9c",
+    "storage_bucket": "events-4ac9c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1060698767263:android:b0d8cf3f9148f686c247aa",
+        "mobilesdk_app_id": "1:681263502209:android:174769b63d04ba0d628e80",
         "android_client_info": {
-          "package_name": "org.codebase.events"
+          "package_name": "pk.cust.events"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCsP0CR9XL47YpaKNyc4xqYLq_RQSuS3Uk"
+          "current_key": "AIzaSyD-aHLgxDzYfOLAsGUVdPU-9q1BPvvGvvU"
         }
       ],
       "services": {

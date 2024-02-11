@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'org.codebase.events'
+    namespace 'pk.cust.events'
     compileSdk 34
 
     defaultConfig {
-        applicationId "org.codebase.events"
+        applicationId "pk.cust.events"
         minSdk 24
         targetSdk 34
         versionCode 1
