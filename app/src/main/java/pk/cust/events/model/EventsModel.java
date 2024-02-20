@@ -1,29 +1,29 @@
 package pk.cust.events.model;
 
 public class EventsModel {
-    int id;
-    int eventImage;
+    String id;
+    String eventImage;
     String eventTitle;
 
-    public EventsModel(int id, int eventImage, String eventTitle) {
+    public EventsModel(String id, String eventImage, String eventTitle) {
         this.id = id;
         this.eventImage = eventImage;
         this.eventTitle = eventTitle;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getEventImage() {
+    public String getEventImage() {
         return eventImage;
     }
 
-    public void setEventImage(int eventImage) {
+    public void setEventImage(String eventImage) {
         this.eventImage = eventImage;
     }
 

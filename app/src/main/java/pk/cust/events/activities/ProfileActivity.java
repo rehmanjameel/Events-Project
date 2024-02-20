@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +41,10 @@ public class ProfileActivity extends AppCompatActivity {
         binding.personGender.setText(App.getString("gender"));
         binding.personAddress.setText(App.getString("address"));
 
+//        ImageView backArrow = findViewById(R.id.backArrow);
+//        backArrow.setOnClickListener(view -> {
+//            onBackPressed();
+//        });
         binding.backArrow.setOnClickListener(view -> {
             onBackPressed();
         });
