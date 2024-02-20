@@ -4,14 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/purple_700"
     tools:context="pk.cust.events.activities.RegisterP2Activity">
 
-    <View
-        android:id="@+id/topView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/view_background"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,17 +14,23 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/topView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/view_background"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="200dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/white"
+                android:backgroundTint="@color/purple_700"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="8dp">
 
@@ -126,13 +127,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
+                        app:helperText="Note: password should contain on min 6 characters, 1 capital 'ABC', 1 small 'abc' letter, 1 digit '0123', and 1 special character '@%#*..'"
+                        app:helperTextTextColor="@color/teal_700"
                         app:passwordToggleEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/passwordTIET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Password"
+                            android:hint="Password:e.g, Test@123"
                             android:inputType="textPassword"
                             android:maxLines="1" />
 
@@ -171,7 +174,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="Login"
-                            android:textColor="@color/purple_700"
+                            android:textColor="@color/white"
                             android:textSize="14sp" />
 
                     </LinearLayout>

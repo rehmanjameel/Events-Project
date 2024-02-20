@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import pk.cust.events.R;
 import pk.cust.events.model.EventsModel;
 
@@ -44,7 +45,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 .placeholder(R.drawable.baseline_image_24)
                 .into(holder.eventImage);
 
+        Glide.with(context)
+                .load(model.getPersonImage())
+                .error(R.drawable.baseline_image_24)
+                .placeholder(R.drawable.baseline_image_24)
+                .into(holder.personImage);
+
         holder.eventTitle.setText(model.getEventTitle());
+        holder.eventDomain.setText(model.getEventDomain());
+        holder.personName.setText(model.getPersonName());
     }
 
     @Override
@@ -54,12 +63,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView eventImage;
-        TextView eventTitle;
+        CircleImageView personImage;
+        TextView eventTitle, eventDomain, personName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             eventImage = itemView.findViewById(R.id.eventImage);
             eventTitle = itemView.findViewById(R.id.eventTitle);
+            eventDomain = itemView.findViewById(R.id.eventDomain);
+            personImage = itemView.findViewById(R.id.personImage);
+            personName = itemView.findViewById(R.id.personName);
         }
     }
 }

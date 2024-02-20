@@ -121,9 +121,12 @@ public class HomeFragment extends Fragment {
                                 .onSuccessTask(userDocument -> {
                                     String userName = userDocument.getString("user_name");
                                     String userImage = userDocument.getString("user_image");
+                                    String userDomain = userDocument.getString("domain");
                                     Log.e("user name from posts", userName + ",.,." + userImage);
 
-                                    eventsModelArrayList.add(new HomeEventsModel(userId, userName, userImage, description, imageUrl));
+                                    if (userDomain.equals(App.getString("domain"))) {
+                                        eventsModelArrayList.add(new HomeEventsModel(userId, userName, userImage, description, imageUrl));
+                                    }
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
 
                                     return Tasks.forResult(null);

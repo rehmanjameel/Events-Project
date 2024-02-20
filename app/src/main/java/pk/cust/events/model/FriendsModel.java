@@ -4,11 +4,13 @@ public class FriendsModel {
     String id;
     String friendImage;
     String friendName;
+    String friendDomain;
 
-    public FriendsModel(String id, String friendImage, String friendName) {
+    public FriendsModel(String id, String friendImage, String friendName, String friendDomain) {
         this.id = id;
         this.friendImage = friendImage;
         this.friendName = friendName;
+        this.friendDomain = friendDomain;
     }
 
     public String getId() {
@@ -33,5 +35,13 @@ public class FriendsModel {
 
     public void setFriendName(String friendName) {
         this.friendName = friendName;
+    }
+
+    public String getFriendDomain() {
+        return friendDomain;
+    }
+
+    public void setFriendDomain(String friendDomain) {
+        this.friendDomain = friendDomain;
     }
 }

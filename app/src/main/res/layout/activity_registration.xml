@@ -4,14 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/purple_700"
     tools:context="pk.cust.events.activities.RegistrationActivity">
-
-    <View
-        android:id="@+id/topView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/view_background"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,16 +14,23 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            >
+
+            <View
+                android:id="@+id/topView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/view_background"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="200dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/white"
+                android:backgroundTint="@color/purple_700"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="8dp">
 
@@ -117,7 +118,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="top"
                             android:maxLines="3"
-                            android:hint="Current Address"/>
+                            android:hint="Country"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -156,7 +157,7 @@
                             android:layout_marginStart="5dp"
                             android:text="@string/log_in"
                             android:padding="10dp"
-                            android:textColor="@color/purple_700"
+                            android:textColor="@color/white"
                             android:textSize="14sp" />
 
                     </LinearLayout>

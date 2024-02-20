@@ -459,8 +459,8 @@ public class RegisterP2Activity extends AppCompatActivity {
                 year, month, day
         );
 
-//        myCalendar.add(Calendar.YEAR, 18);
-//        datePickerDialog.getDatePicker().setMaxDate(myCalendar.getTimeInMillis());
+//        myCalendar.add(Calendar.YEAR, -18);
+        datePickerDialog.getDatePicker().setMaxDate(myCalendar.getTimeInMillis());
         datePickerDialog.show();
     }
 }

@@ -30,7 +30,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     @NonNull
     @Override
     public FriendsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.events_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friends_layout, parent, false);
         return new FriendsAdapter.ViewHolder(view);
     }
 
@@ -42,9 +42,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 .load(model.getFriendImage())
                 .error(R.drawable.baseline_image_24)
                 .placeholder(R.drawable.baseline_image_24)
-                .into(holder.eventImage);
+                .into(holder.friendImage);
 
-        holder.eventTitle.setText(model.getFriendName());
+        holder.friendName.setText(model.getFriendName());
+        holder.friendDomain.setText(model.getFriendDomain());
     }
 
     @Override
@@ -53,13 +54,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView eventImage;
-        TextView eventTitle;
+        ImageView friendImage;
+        TextView friendName, friendDomain;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            eventImage = itemView.findViewById(R.id.eventImage);
-            eventTitle = itemView.findViewById(R.id.eventTitle);
+            friendImage = itemView.findViewById(R.id.friendImage);
+            friendName = itemView.findViewById(R.id.friendName);
+            friendDomain = itemView.findViewById(R.id.friendDomain);
         }
     }
 }

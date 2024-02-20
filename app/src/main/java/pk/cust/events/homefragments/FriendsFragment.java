@@ -68,7 +68,7 @@ public class FriendsFragment extends Fragment {
 
     private void getDataFromFireStore() {
         db.collection("users")
-                .whereEqualTo("domain", App.getString("domain"))
+//                .whereEqualTo("domain", App.getString("domain"))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -93,10 +93,11 @@ public class FriendsFragment extends Fragment {
 
                                 friendsModelArrayList.add(new FriendsModel(document.getId(),
                                         document.get("user_image").toString(),
-                                        document.get("user_name").toString()));
+                                        document.get("user_name").toString(), document.get("domain").toString()));
 //                                if (userName.equals(document.get("email")) && password.equals(document.get("password"))) {
 //                                }
                             }
+
                             if (friendsModelArrayList.size() == 0) {
                                 binding.friendsRV.setVisibility(View.GONE);
                                 binding.noDataText.setVisibility(View.VISIBLE);

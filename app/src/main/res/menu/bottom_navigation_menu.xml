@@ -6,13 +6,15 @@
         android:title="Home" />
 
     <item
-        android:id="@+id/chatRoom"
-        android:icon="@drawable/baseline_forum_24"
-        android:title="" />
-    <item
         android:id="@+id/eventMenu"
         android:icon="@drawable/baseline_event_24"
         android:title="" />
+
+    <item
+        android:id="@+id/chatRoom"
+        android:icon="@drawable/baseline_forum_24"
+        android:title="" />
+
     <item
         android:id="@+id/diversity"
         android:icon="@drawable/baseline_diversity_3_24"

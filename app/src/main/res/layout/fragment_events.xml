@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="pk.cust.events.homefragments.EventsFragment">
 
@@ -10,7 +11,9 @@
         android:id="@+id/topLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/purple_500">
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        >
 
         <ImageButton
             android:id="@+id/searchIcon"
@@ -60,5 +63,15 @@
         android:text="No Data found"
         android:visibility="gone"
         android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:progress="100"
+        android:visibility="gone"
+        android:indeterminateTint="@color/purple_700"
+        />
 
 </RelativeLayout>
