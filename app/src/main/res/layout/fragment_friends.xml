@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,13 +26,43 @@
 
     </RelativeLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:id="@+id/searchViewTIL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textColorHint="@color/lite_color"
+        app:boxStrokeColor="@color/white"
+        app:hintTextColor="@color/lite_color"
+        app:cursorColor="@color/lite_color"
+        app:boxStrokeWidth="1dp"
+        app:endIconMode="clear_text"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchEditTextId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search by user name or domain"
+            android:textColorHint="#bfbfbf"
+            android:textColor="@color/black"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendsRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
-        android:layout_below="@id/topLayout"/>
+        android:layout_below="@id/searchViewTIL"/>
 
     <TextView
         android:id="@+id/noDataText"

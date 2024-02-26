@@ -1,6 +1,7 @@
 package pk.cust.events.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +18,18 @@ import pk.cust.events.R;
 import pk.cust.events.model.EventsModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
-    Context context;
-    ArrayList<EventsModel> eventsList;
+    private Context context;
+    private ArrayList<EventsModel> eventsList;
+    private ArrayList<EventsModel> filteredList;
 
     public EventsAdapter(Context context, ArrayList<EventsModel> eventsList) {
         this.context = context;
         this.eventsList = eventsList;
+        this.filteredList = new ArrayList<>(eventsList);
     }
 
     @NonNull
@@ -37,7 +41,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        EventsModel model = eventsList.get(position);
+        EventsModel model = filteredList.get(position);
 
         Glide.with(context)
                 .load(model.getEventImage())
@@ -58,7 +62,24 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return eventsList.size();
+        return filteredList.size();
+    }
+
+    public void filter(String query) {
+        filteredList.clear();
+        if (TextUtils.isEmpty(query)) {
+            filteredList.addAll(eventsList);
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (EventsModel model : eventsList) {
+                if (model.getEventTitle().toLowerCase().contains(lowerCaseQuery) ||
+                        model.getEventDomain().toLowerCase().contains(lowerCaseQuery) ||
+                        model.getPersonName().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(model);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

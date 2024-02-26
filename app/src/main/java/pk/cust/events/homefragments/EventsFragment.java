@@ -1,38 +1,33 @@
 package pk.cust.events.homefragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import pk.cust.events.R;
 import pk.cust.events.adapter.EventsAdapter;
-import pk.cust.events.adapter.HomeEventsAdapter;
 import pk.cust.events.databinding.FragmentEventsBinding;
 import pk.cust.events.model.EventsModel;
-import pk.cust.events.model.HomeEventsModel;
-import pk.cust.events.utils.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,112 +48,69 @@ public class EventsFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentEventsBinding.inflate(inflater, container, false);
 
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.exhibition, "Event"));
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.newyear, "Event"));
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.palestine, "Event"));
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.football, "Event"));
-//        eventsModelArrayList.add(new EventsModel(0, R.drawable.event1, "Event"));
-
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
 
-
+        setupUI(binding.relativeLayout);
         GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), 2);
         binding.eventsRV.setLayoutManager(layoutManager);
 
-        // Set up click listener for the search icon to show the search bar
-        binding.searchIcon.setOnClickListener(new View.OnClickListener() {
+        binding.searchEditTextId.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                showSearchView();
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String query = editable.toString().trim();
+                eventsAdapter.filter(query); // Call filter method in adapter
             }
         });
 
         getDataFromFireStore();
 
-        int id = binding.searchView.getContext()
-                .getResources()
-                .getIdentifier("android:id/search_src_text", null, null);
-        TextView textView = binding.searchView.findViewById(id);
-//        textView.setTextColor(Color.WHITE);
-
-        // Set up close button click listener to hide the search bar
-        binding.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                hideSearchView();
-                return false;
-            }
-        });
-
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.search_menu, menu);
-
-                // Add option Menu Here
-                // Initialise menu item search bar
-                // with id and take its object
-                MenuItem searchViewItem = menu.findItem(R.id.search_bar);
-                SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
-
-                // attach setOnQueryTextListener
-                // to search view defined above
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    // Override onQueryTextSubmit method which is call when submit query is searched
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        // If the list contains the search query than filter the adapter
-                        // using the filter method with the query as its argument
-//                        if (list.contains(query)) {
-//                            adapter.getFilter().filter(query);
-//                        } else {
-//                            // Search query not found in List View
-//                            Toast.makeText(MainActivity.this, "Not found", Toast.LENGTH_LONG).show();
-//                        }
-                        return false;
-                    }
-
-                    // This method is overridden to filter the adapter according
-                    // to a search query when the user is typing search
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-//                        adapter.getFilter().filter(newText);
-                        return false;
-                    }
-                });
-
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-
-                // Handle option Menu Here
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-
         return binding.getRoot();
     }
 
-    private void showSearchView() {
-        binding.titleTextView.setVisibility(View.INVISIBLE);
-        binding.searchView.setVisibility(View.VISIBLE);
-        binding.searchView.setIconified(false); // Expand the search view
-        binding.searchView.requestFocus(); // Set focus to the search view
-        binding.searchIcon.setVisibility(View.GONE);
+    public void hideSoftKeyboard()
+    {
+        //Hides the SoftKeyboard
+        InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
-    private void hideSearchView() {
-        binding.titleTextView.setVisibility(View.VISIBLE);
-        binding.searchView.setVisibility(View.INVISIBLE);
-        binding.searchView.setQuery("", false); // Clear the search query
-        binding.searchView.clearFocus(); // Remove focus from the search view
-        binding.searchIcon.setVisibility(View.VISIBLE);
+    public void setupUI(View view) {
+        // Set up touch listener to remove focus from EditText and TextInputEditText.
+        if (!(view instanceof EditText) && !(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    // Remove focus from EditText and TextInputEditText
+                    if (getActivity() != null && (getActivity().getCurrentFocus() instanceof EditText ||
+                            getActivity().getCurrentFocus() instanceof TextInputEditText)) {
+                        hideSoftKeyboard();
+                        getActivity().getCurrentFocus().clearFocus();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        // If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
+
 
     private void getDataFromFireStore() {
         eventsModelArrayList.clear();
@@ -185,9 +137,8 @@ public class EventsFragment extends Fragment {
                                     String userDomain = userDocument.getString("domain");
                                     Log.e("user name from posts", userName + ",.,." + userImage);
 
-                                    if (userDomain.equals(App.getString("domain"))) {
-                                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain));
-                                    }
+                                    eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain));
+
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
 
                                     return Tasks.forResult(null);

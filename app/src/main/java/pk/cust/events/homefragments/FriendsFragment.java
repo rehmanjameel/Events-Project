@@ -1,33 +1,37 @@
 package pk.cust.events.homefragments;
 
-import android.content.Intent;
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import pk.cust.events.activities.LoginActivity;
-import pk.cust.events.activities.MainActivity;
-import pk.cust.events.adapter.EventsAdapter;
 import pk.cust.events.adapter.FriendsAdapter;
 import pk.cust.events.databinding.FragmentFriendsBinding;
-import pk.cust.events.model.EventsModel;
 import pk.cust.events.model.FriendsModel;
-import pk.cust.events.utils.App;
 
 import java.util.ArrayList;
 
@@ -52,23 +56,67 @@ public class FriendsFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
 
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Ahmad"));
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maha"));
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Usama"));
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Wahid"));
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Maham"));
-//        friendsModelArrayList.add(new EventsModel(0, R.drawable.profile, "Asma"));
+        setupUI(container);
 
         GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), 2);
         binding.friendsRV.setLayoutManager(layoutManager);
 
         getDataFromFireStore();
+
+        binding.searchEditTextId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String query = editable.toString().trim();
+                friendsAdapter.filterFriends(query);
+            }
+        });
+
         return binding.getRoot();
+    }
+
+    public void hideSoftKeyboard() {
+        //Hides the SoftKeyboard
+        InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+        // Set up touch listener to remove focus from EditText and TextInputEditText.
+        if (!(view instanceof EditText) && !(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    // Remove focus from EditText and TextInputEditText
+                    if (getActivity() != null && (getActivity().getCurrentFocus() instanceof EditText ||
+                            getActivity().getCurrentFocus() instanceof TextInputEditText)) {
+                        hideSoftKeyboard();
+                        getActivity().getCurrentFocus().clearFocus();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        // If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
     private void getDataFromFireStore() {
         db.collection("users")
-//                .whereEqualTo("domain", App.getString("domain"))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -77,25 +125,11 @@ public class FriendsFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e("TAG", document.getId() + " => " + document.getData() + document.get("email"));
 
-//                                App.saveString("document_id", document.getId());
-//                                Log.e("email", document.get("user_name") + ",.," + document.get("email"));
-//                                App.saveString("uer_name", String.valueOf(document.get("user_name")));
-//                                App.saveString("gender", String.valueOf(document.get("gender")));
-//                                App.saveString("phone_no", String.valueOf(document.get("phone_no")));
-//                                App.saveString("address", String.valueOf(document.get("address")));
-//                                App.saveString("user_image", String.valueOf(document.get("user_image")));
-//                                App.saveString("dob", String.valueOf(document.get("dob")));
-//                                App.saveString("domain", String.valueOf(document.get("domain")));
-//                                App.saveString("interest", String.valueOf(document.get("interest")));
-//                                App.saveString("email", String.valueOf(document.get("email")));
-
                                 binding.progressbar.setVisibility(View.GONE);
 
                                 friendsModelArrayList.add(new FriendsModel(document.getId(),
                                         document.get("user_image").toString(),
                                         document.get("user_name").toString(), document.get("domain").toString()));
-//                                if (userName.equals(document.get("email")) && password.equals(document.get("password"))) {
-//                                }
                             }
 
                             if (friendsModelArrayList.size() == 0) {

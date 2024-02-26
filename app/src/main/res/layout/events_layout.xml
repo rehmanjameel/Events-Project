@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_below="@id/eventImage"
-                android:layout_marginTop="-80dp"
+                android:layout_marginTop="-100dp"
                 android:layout_alignParentBottom="true"
                 >
 
@@ -70,9 +70,9 @@
                     android:gravity="start"
                     android:layout_marginStart="10dp"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
