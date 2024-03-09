@@ -1,5 +1,6 @@
 package pk.cust.events.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -7,8 +8,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import pk.cust.events.databinding.ActivityMainBinding;
 
 import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import pk.cust.events.R;
+import pk.cust.events.utils.App;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +58,40 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        // get fcm token
+        getFCMToken();
+
+    }
+
+    private void getFCMToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+                    Log.e("tokeen", token);
+//                    Toast.makeText(MainActivity.this, "token: " + token, Toast.LENGTH_SHORT).show();
+
+                    saveTokenToFireStore(App.getString("document_id"), token);
+
+                }
+            }
+        });
+    }
+
+    // Assume 'userId' is the user's unique ID and 'token' is the FCM token
+    private void saveTokenToFireStore(String userId, String token) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Update the token field for the user
+        db.collection("users").document(userId)
+                .update("token", token)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("TAG", "Token saved successfully for user: " + userId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG", "Failed to save token for user: " + userId, e);
+                });
     }
 
     @Override

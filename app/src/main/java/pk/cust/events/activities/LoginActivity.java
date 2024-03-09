@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 App.saveString("document_id", document.getId());
                                 Log.e("email", document.get("user_name") + ",.," + document.get("email"));
-                                App.saveString("uer_name", String.valueOf(document.get("user_name")));
+                                App.saveString("user_name", String.valueOf(document.get("user_name")));
                                 App.saveString("gender", String.valueOf(document.get("gender")));
                                 App.saveString("phone_no", String.valueOf(document.get("phone_no")));
                                 App.saveString("address", String.valueOf(document.get("address")));
