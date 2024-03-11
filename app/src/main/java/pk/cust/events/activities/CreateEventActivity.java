@@ -224,7 +224,7 @@ public class CreateEventActivity extends AppCompatActivity {
         for (String token : deviceTokens) {
             JSONObject jsonNotify = new JSONObject();
             try {
-                jsonNotify.put("title", App.getString("user_name") + " sends " + title);
+                jsonNotify.put("title", title + " sends");
                 jsonNotify.put("body", body);
 
                 JSONObject messageJson = new JSONObject();
@@ -235,7 +235,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 Request request = new Request.Builder()
                         .url("https://fcm.googleapis.com/fcm/send")
                         .post(requestBody)
-                        .addHeader("Authorization", "Bearer AAAAar65774:APA91bE6BwdQQoG53I0hL03gTjcm2GHD1wgle5WxHwvXNSgL-JiMZKvZQXvII3dTuBjha3CRz4V2fUAnpPe24L38eOj2NhbXbA-yI8thSxEOZzOCVNxQKtRrBHHVf92TdxfMiadQvfV4") // Replace with your FCM server key
+                        .addHeader("Authorization", "Bearer " + R.string.server_key) // Replace with your FCM server key
                         .addHeader("Content-Type", "application/json")
                         .build();
 
