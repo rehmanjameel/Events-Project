@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import pk.cust.events.databinding.ActivityMainBinding;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         });
+
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            //your codes here
+
+        }
 
         // get fcm token
         getFCMToken();
