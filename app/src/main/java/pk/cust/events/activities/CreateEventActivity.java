@@ -201,8 +201,8 @@ public class CreateEventActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String userId = document.getId();
                         String token = document.getString("token");
-                        Log.e("user token and id", userId + " ,.," + token);
-                        if (token != null) {
+                        if (token != null && !userId.equals(App.getString("document_id"))) {
+                            Log.e("user token and id", userId + " ,.," + token);
                             tokens.add(token);
                             // Send notification using 'token' for each user
                         } else {
