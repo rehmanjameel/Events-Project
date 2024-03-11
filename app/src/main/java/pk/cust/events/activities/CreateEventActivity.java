@@ -221,10 +221,13 @@ public class CreateEventActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
+
         for (String token : deviceTokens) {
+            Log.e("user token and id", " ,.," + token);
+
             JSONObject jsonNotify = new JSONObject();
             try {
-                jsonNotify.put("title", title + " sends");
+                jsonNotify.put("title", title + " creates new event");
                 jsonNotify.put("body", body);
 
                 JSONObject messageJson = new JSONObject();
@@ -235,7 +238,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 Request request = new Request.Builder()
                         .url("https://fcm.googleapis.com/fcm/send")
                         .post(requestBody)
-                        .addHeader("Authorization", "Bearer " + R.string.server_key) // Replace with your FCM server key
+                        .addHeader("Authorization", "Bearer AAAAnp54E4E:APA91bF09wKMyPx9H-CrlwzbvIsbJ2oeyjHHwUlVyLRci4RhxH3t18js-br9INWW1gYDAmTYZLi3kusD-RPXncPqsKQV3BHEma8oUzP8qLErDZWmkOUTvLNQ-8ewcxSH3D8Y2rTCowie") // Replace with your FCM server key
                         .addHeader("Content-Type", "application/json")
                         .build();
 

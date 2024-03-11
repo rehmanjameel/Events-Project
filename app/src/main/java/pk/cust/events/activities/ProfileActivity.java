@@ -31,8 +31,8 @@ public class ProfileActivity extends AppCompatActivity {
                 .placeholder(R.drawable.baseline_account_circle_24)
                 .into(binding.profilePicture);
 
-        Log.e("user name of profile", App.getString("uer_name"));
-        binding.profileName.setText(App.getString("uer_name"));
+        Log.e("user name of profile", App.getString("user_name"));
+        binding.profileName.setText(App.getString("user_name"));
         binding.domainName.setText(App.getString("domain"));
         binding.interestName.setText(App.getString("interest"));
         binding.personEmail.setText(App.getString("email"));
