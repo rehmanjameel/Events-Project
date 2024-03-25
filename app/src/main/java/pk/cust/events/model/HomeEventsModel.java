@@ -1,19 +1,29 @@
 package pk.cust.events.model;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
+
 public class HomeEventsModel {
     private String userId;
-    private String userName;  // You can include the user's name in the Post model for convenience
-    private String userImage; // You can include the user's image URL in the Post model for convenience
+    private String userName;
+    private String userImage;
     private String description;
     private String imageUrl;
+    private int likesCount;
+    private List<String> likedBy;
 
-    public HomeEventsModel(String userId, String userName, String userImage, String description, String imageUrl) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userImage = userImage;
-        this.description = description;
-        this.imageUrl = imageUrl;
-    }
+
+//    public HomeEventsModel(String userId, String userName, String userImage, String description,
+//                           String imageUrl, int likesCount, List<String> likedBy) {
+//        this.userId = userId;
+//        this.userName = userName;
+//        this.userImage = userImage;
+//        this.description = description;
+//        this.imageUrl = imageUrl;
+//        this.likesCount = likesCount;
+//        this.likedBy = likedBy;
+//    }
 
     public String getUserId() {
         return userId;
@@ -53,5 +63,25 @@ public class HomeEventsModel {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public List<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(List<String> likedBy) {
+        this.likedBy = likedBy;
+    }
+
+    public boolean isLiked(String currentUserId) {
+        return likedBy != null && likedBy.contains(currentUserId);
     }
 }

@@ -2,6 +2,7 @@ package pk.cust.events.adapter;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Transaction;
 
 import pk.cust.events.R;
 import pk.cust.events.model.HomeEventsModel;
@@ -92,6 +97,10 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
 
         holder.eventTopic.setText(model.getDescription());
 
+        // Set like button state and count
+        holder.likeButton.setImageResource(model.isLiked(model.getUserId()) ? R.drawable.baseline_favorite_24 : R.drawable.baseline_favorite_border_24);
+        holder.likesCount.setText(String.valueOf(model.getLikesCount()));
+
     }
 
     @Override
@@ -101,8 +110,8 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView userName, eventTopic;
-        ImageView personImage, eventImage, chatImage;
+        TextView userName, eventTopic, likesCount;
+        ImageView personImage, eventImage, chatImage, likeButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,6 +121,25 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
             eventImage = itemView.findViewById(R.id.eventImage);
             eventTopic = itemView.findViewById(R.id.eventTopic);
             chatImage = itemView.findViewById(R.id.discussionIcon);
+            likeButton = itemView.findViewById(R.id.likeIcon); // Assuming it's an ImageView
+            likesCount = itemView.findViewById(R.id.eventLikes);
         }
+    }
+
+    private void updateLikeCount(String eventId, boolean newState) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventRef = db.collection("posts").document(eventId);
+
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentSnapshot snapshot = transaction.get(eventRef);
+            int newLikesCount = snapshot.getLong("likesCount").intValue() + (newState ? 1 : -1);
+            transaction.update(eventRef, "likesCount", newLikesCount);
+            return null;
+        }).addOnSuccessListener(aVoid -> {
+            // Transaction success
+        }).addOnFailureListener(e -> {
+            // Transaction failure
+            Log.e("Firestore", "Transaction failed: " + e.getMessage());
+        });
     }
 }

@@ -124,8 +124,16 @@ public class HomeFragment extends Fragment {
                                     String userDomain = userDocument.getString("domain");
                                     Log.e("user name from posts", userName + ",.,." + userImage);
 
+
                                     if (userDomain.equals(App.getString("domain"))) {
-                                        eventsModelArrayList.add(new HomeEventsModel(userId, userName, userImage, description, imageUrl));
+                                        HomeEventsModel homeEventsModel = new HomeEventsModel();
+                                        homeEventsModel.setUserId(userId);
+                                        homeEventsModel.setUserName(userName);
+                                        homeEventsModel.setUserImage(userImage);
+                                        homeEventsModel.setDescription(description);
+                                        homeEventsModel.setUserImage(imageUrl);
+                                        homeEventsModel.setLikesCount(0);
+                                        eventsModelArrayList.add(homeEventsModel);
                                     }
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
 

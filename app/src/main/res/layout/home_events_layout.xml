@@ -55,6 +55,36 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
 
+            <ImageView
+                android:id="@+id/likeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_favorite_border_24"
+                android:layout_marginStart="10dp"
+                android:layout_alignParentStart="true"
+                app:tint="@color/white"/>
+
+            <ImageView
+                android:id="@+id/discussionIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_forum_24"
+                android:layout_toEndOf="@+id/likeIcon"
+                android:layout_marginStart="20dp"
+                app:tint="@color/white"/>
+
+            <TextView
+                android:id="@+id/eventLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Likes"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:layout_marginStart="10dp"
+                android:layout_below="@+id/likeIcon"
+                android:visibility="gone"
+                android:layout_alignParentStart="true" />
+
             <TextView
                 android:id="@+id/eventTopic"
                 android:layout_width="wrap_content"
@@ -63,25 +93,8 @@
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:layout_marginStart="10dp"
+                android:layout_below="@id/eventLikes"
                 android:layout_alignParentStart="true"/>
-
-            <ImageView
-                android:id="@+id/discussionIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_forum_24"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                app:tint="@color/white"/>
-
-            <ImageView
-                android:id="@+id/likeIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_favorite_border_24"
-                android:layout_toStartOf="@id/discussionIcon"
-                android:layout_marginEnd="10dp"
-                app:tint="@color/white"/>
 
         </RelativeLayout>
 
