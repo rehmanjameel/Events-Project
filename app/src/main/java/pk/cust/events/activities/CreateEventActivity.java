@@ -179,6 +179,7 @@ public class CreateEventActivity extends AppCompatActivity {
             db.collection("posts")
                     .add(post)
                     .addOnSuccessListener(documentReference -> {
+                        addDummyLike(documentReference.getId());
                         getTokensFromFirestore(App.getString("user_name"), description);
                         Toast.makeText(this, "Post uploaded successfully!", Toast.LENGTH_LONG).show();
                         onBackPressed();
@@ -187,6 +188,23 @@ public class CreateEventActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> {
                         binding.progressbar.setVisibility(View.VISIBLE);
                         Toast.makeText(this, "Failed to post" + e, Toast.LENGTH_LONG).show();
+                        // Handle failure
+                    });
+        }
+    }
+
+    private void addDummyLike(String postId) {
+        if (currentUser != null) {
+            String userId = App.getString("document_id");
+
+            // Add a dummy like document within the "likes" subcollection of the post
+            db.collection("posts").document(postId)
+                    .collection("likes").document(userId)
+                    .set(new HashMap<>()) // You can set any dummy data or leave it empty
+                    .addOnSuccessListener(aVoid -> {
+                        // Dummy like added successfully
+                    })
+                    .addOnFailureListener(e -> {
                         // Handle failure
                     });
         }

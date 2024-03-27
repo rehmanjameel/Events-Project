@@ -25,6 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -128,6 +130,7 @@ public class HomeFragment extends Fragment {
                                     if (userDomain.equals(App.getString("domain"))) {
                                         HomeEventsModel homeEventsModel = new HomeEventsModel();
                                         homeEventsModel.setUserId(userId);
+                                        homeEventsModel.setPostId(document.getId());
                                         homeEventsModel.setUserName(userName);
                                         homeEventsModel.setUserImage(userImage);
                                         homeEventsModel.setDescription(description);
@@ -161,6 +164,25 @@ public class HomeFragment extends Fragment {
                     binding.progressbar.setVisibility(View.GONE);
                     // Handle failure
                 });
+    }
+
+    // Method to get the likes count for a post
+    private Task<Integer> fetchLikesCount(String postId, String userId) {
+        DocumentReference postRef = db.collection("posts").document(postId).collection("likes").document(userId);
+
+        return postRef.get().continueWith(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    long likesCount = documentSnapshot.getLong("dummyField"); // Field name doesn't matter, just need to get a non-null document
+                    return (int) likesCount; // Return likes count
+                } else {
+                    return 0; // Return 0 if "likes" subcollection doesn't exist
+                }
+            } else {
+                return 0; // Return 0 on failure
+            }
+        });
     }
 
     @Override

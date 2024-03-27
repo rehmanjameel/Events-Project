@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +27,17 @@ import com.google.firebase.firestore.Transaction;
 
 import pk.cust.events.R;
 import pk.cust.events.model.HomeEventsModel;
+import pk.cust.events.utils.App;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.ViewHolder> {
 
     Activity activity;
     ArrayList<HomeEventsModel> eventsModels;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     public HomeEventsAdapter(Activity activity, ArrayList<HomeEventsModel> eventsModels) {
         this.activity = activity;
@@ -98,9 +103,41 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
         holder.eventTopic.setText(model.getDescription());
 
         // Set like button state and count
-        holder.likeButton.setImageResource(model.isLiked(model.getUserId()) ? R.drawable.baseline_favorite_24 : R.drawable.baseline_favorite_border_24);
+        boolean isLiked = model.isLiked(model.getUserId()); // Assuming current user's document ID is used for checking like status
+        updateLikeButtonIcon(holder.likeButton, isLiked); // Update like button icon based on the current like state
         holder.likesCount.setText(String.valueOf(model.getLikesCount()));
+        // Set like button state and count
+//        holder.likeButton.setImageResource(model.isLiked(model.getUserId()) ? R.drawable.baseline_favorite_24 : R.drawable.baseline_favorite_border_24);
+//        holder.likesCount.setText(String.valueOf(model.getLikesCount()));
 
+        // Set click listener for like button
+        holder.likeButton.setOnClickListener(v -> {
+            // Toggle like state
+            boolean newLikeState = !isLiked;
+            // Update like button icon based on the new like state
+            updateLikeButtonIcon(holder.likeButton, newLikeState);
+            // Update model's likedBy list based on the new like state
+            if (newLikeState) {
+                model.getLikedBy().add(App.getString("document_id"));
+            } else {
+                model.getLikedBy().remove(App.getString("document_id"));
+            }
+            // Update likes count in the model
+            int likesCount = newLikeState ? model.getLikesCount() + 1 : model.getLikesCount() - 1;
+            model.setLikesCount(likesCount);
+            // Call handleLikeAction method when like button is clicked
+            handleLikeAction(model.getPostId(), newLikeState);
+        });
+
+    }
+
+    // Method to update like button icon based on the like state
+    private void updateLikeButtonIcon(ImageView likeButton, boolean isLiked) {
+        if (isLiked) {
+            likeButton.setImageResource(R.drawable.baseline_favorite_24); // Set filled heart icon when liked
+        } else {
+            likeButton.setImageResource(R.drawable.baseline_favorite_border_24); // Set outline heart icon when not liked
+        }
     }
 
     @Override
@@ -125,6 +162,39 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
             likesCount = itemView.findViewById(R.id.eventLikes);
         }
     }
+
+    // Assuming you have a method to handle the like action, for example:
+    // Method to handle like action for a post
+    private void handleLikeAction(String postId, boolean newLikeState) {
+//        if (currentUser != null) {
+            String userId = App.getString("document_id");
+            DocumentReference postRef = db.collection("posts").document(postId);
+            DocumentReference likeRef = postRef.collection("likes").document(userId);
+
+            if (newLikeState) {
+                // User likes the post, so add like
+                likeRef.set(new HashMap<>())
+                        .addOnSuccessListener(aVoid -> {
+                            // Like successful
+                            // Update UI to reflect like
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle like failure
+                        });
+            } else {
+                // User unlikes the post, so remove like
+                likeRef.delete()
+                        .addOnSuccessListener(aVoid -> {
+                            // Unlike successful
+                            // Update UI to reflect unlike
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle unlike failure
+                        });
+            }
+//        }
+    }
+
 
     private void updateLikeCount(String eventId, boolean newState) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

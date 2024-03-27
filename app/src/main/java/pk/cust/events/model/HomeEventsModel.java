@@ -6,6 +6,7 @@ import java.util.List;
 
 public class HomeEventsModel {
     private String userId;
+    private String postId;
     private String userName;
     private String userImage;
     private String description;
@@ -31,6 +32,14 @@ public class HomeEventsModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getUserName() {
