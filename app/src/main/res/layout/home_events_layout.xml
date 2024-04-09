@@ -77,12 +77,12 @@
                 android:id="@+id/eventLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Likes"
+                android:text="0 likes"
                 android:textSize="14sp"
                 android:textColor="@color/white"
                 android:layout_marginStart="10dp"
                 android:layout_below="@+id/likeIcon"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_alignParentStart="true" />
 
             <TextView

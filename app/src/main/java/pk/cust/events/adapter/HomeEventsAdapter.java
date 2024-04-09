@@ -1,6 +1,7 @@
 package pk.cust.events.adapter;
 
 import android.app.Activity;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,9 +22,15 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 
 import pk.cust.events.R;
@@ -37,11 +45,15 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
     Activity activity;
     ArrayList<HomeEventsModel> eventsModels;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    DocumentReference likeReference;
+    String user_id;
+    boolean testClick = false;
 
     public HomeEventsAdapter(Activity activity, ArrayList<HomeEventsModel> eventsModels) {
         this.activity = activity;
         this.eventsModels = eventsModels;
+        user_id = App.getString("document_id");
+
     }
 
     @NonNull
@@ -102,32 +114,49 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
 
         holder.eventTopic.setText(model.getDescription());
 
-        // Set like button state and count
-        boolean isLiked = model.isLiked(model.getUserId()); // Assuming current user's document ID is used for checking like status
-        updateLikeButtonIcon(holder.likeButton, isLiked); // Update like button icon based on the current like state
-        holder.likesCount.setText(String.valueOf(model.getLikesCount()));
-        // Set like button state and count
-//        holder.likeButton.setImageResource(model.isLiked(model.getUserId()) ? R.drawable.baseline_favorite_24 : R.drawable.baseline_favorite_border_24);
-//        holder.likesCount.setText(String.valueOf(model.getLikesCount()));
+        holder.getLikeButtonStatus(model.getPostId(), user_id);
 
-        // Set click listener for like button
-        holder.likeButton.setOnClickListener(v -> {
-            // Toggle like state
-            boolean newLikeState = !isLiked;
-            // Update like button icon based on the new like state
-            updateLikeButtonIcon(holder.likeButton, newLikeState);
-            // Update model's likedBy list based on the new like state
-            if (newLikeState) {
-                model.getLikedBy().add(App.getString("document_id"));
-            } else {
-                model.getLikedBy().remove(App.getString("document_id"));
-            }
-            // Update likes count in the model
-            int likesCount = newLikeState ? model.getLikesCount() + 1 : model.getLikesCount() - 1;
-            model.setLikesCount(likesCount);
-            // Call handleLikeAction method when like button is clicked
-            handleLikeAction(model.getPostId(), newLikeState);
+        holder.likeButton.setOnClickListener(view -> {
+            testClick = true;
+            likeReference = db.collection("like").document(model.getPostId());
+
+            likeReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            if (document.contains(user_id)) {
+                                // User has already liked the post, remove the like
+                                likeReference.update(user_id, FieldValue.delete());
+                                holder.likeButton.setImageResource(R.drawable.baseline_favorite_border_24);
+
+                                holder.getLikeButtonStatus(model.getPostId(), user_id);
+                            } else {
+                                // User has not liked the post, add the like
+                                likeReference.update(user_id, true);
+                                holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
+                                holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
+                            }
+                        } else {
+                            // Document doesn't exist, meaning no likes for this post yet
+                            // Add the first like
+                            likeReference.set(new HashMap<String, Object>() {{
+                                put(user_id, true);
+                                holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
+                                holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
+
+                            }});
+                        }
+                    } else {
+                        // Error occurred, handle it accordingly
+                    }
+                }
+            });
+
+
         });
+
 
     }
 
@@ -146,6 +175,8 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventLikeRef;
 
         TextView userName, eventTopic, likesCount;
         ImageView personImage, eventImage, chatImage, likeButton;
@@ -161,55 +192,44 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
             likeButton = itemView.findViewById(R.id.likeIcon); // Assuming it's an ImageView
             likesCount = itemView.findViewById(R.id.eventLikes);
         }
-    }
 
-    // Assuming you have a method to handle the like action, for example:
-    // Method to handle like action for a post
-    private void handleLikeAction(String postId, boolean newLikeState) {
-//        if (currentUser != null) {
-            String userId = App.getString("document_id");
-            DocumentReference postRef = db.collection("posts").document(postId);
-            DocumentReference likeRef = postRef.collection("likes").document(userId);
+        // Method to check if the current user has liked a post
 
-            if (newLikeState) {
-                // User likes the post, so add like
-                likeRef.set(new HashMap<>())
-                        .addOnSuccessListener(aVoid -> {
-                            // Like successful
-                            // Update UI to reflect like
-                        })
-                        .addOnFailureListener(e -> {
-                            // Handle like failure
-                        });
-            } else {
-                // User unlikes the post, so remove like
-                likeRef.delete()
-                        .addOnSuccessListener(aVoid -> {
-                            // Unlike successful
-                            // Update UI to reflect unlike
-                        })
-                        .addOnFailureListener(e -> {
-                            // Handle unlike failure
-                        });
-            }
-//        }
-    }
+        public void getLikeButtonStatus(final String postKey, final String userId) {
+            // Build the reference to the likes collection for the specified post ID
+            eventLikeRef = db.collection("like").document(postKey);
+            eventLikeRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()) {
+                            //count the number of likes
 
+                            if (documentSnapshot.contains(userId)) {
+                                // User has liked the post
+                                likeButton.setImageResource(R.drawable.baseline_favorite_24); // Set filled heart icon when liked
+                                likeButton.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.red), PorterDuff.Mode.SRC_IN);
+                                int totalLikes = documentSnapshot.getData().size();
+                                likesCount.setText(totalLikes + " likes");
+                            } else {
+                                // User has not liked the post
+                                likeButton.setImageResource(R.drawable.baseline_favorite_border_24); // Set outline heart icon when not liked
+                                likeButton.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.white), PorterDuff.Mode.SRC_IN);
 
-    private void updateLikeCount(String eventId, boolean newState) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference eventRef = db.collection("posts").document(eventId);
+                                int totalLikes = documentSnapshot.getData().size();
+                                likesCount.setText(totalLikes + " likes");
+                            }
+                        } else {
+                            // Document doesn't exist, meaning no likes for this post yet
+                            // Handle accordingly, e.g., set default like button state
+                        }
+                    } else {
+                        // Error occurred, handle it accordingly
+                    }
+                }
+            });
+        }
 
-        db.runTransaction((Transaction.Function<Void>) transaction -> {
-            DocumentSnapshot snapshot = transaction.get(eventRef);
-            int newLikesCount = snapshot.getLong("likesCount").intValue() + (newState ? 1 : -1);
-            transaction.update(eventRef, "likesCount", newLikesCount);
-            return null;
-        }).addOnSuccessListener(aVoid -> {
-            // Transaction success
-        }).addOnFailureListener(e -> {
-            // Transaction failure
-            Log.e("Firestore", "Transaction failed: " + e.getMessage());
-        });
     }
 }

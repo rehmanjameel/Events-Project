@@ -134,8 +134,8 @@ public class HomeFragment extends Fragment {
                                         homeEventsModel.setUserName(userName);
                                         homeEventsModel.setUserImage(userImage);
                                         homeEventsModel.setDescription(description);
-                                        homeEventsModel.setUserImage(imageUrl);
-                                        homeEventsModel.setLikesCount(0);
+                                        homeEventsModel.setImageUrl(imageUrl);
+//                                        homeEventsModel.setLikesCount(0);
                                         eventsModelArrayList.add(homeEventsModel);
                                     }
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
