@@ -14,7 +14,11 @@
         android:id="@+id/eventsFragment"
         android:name="pk.cust.events.homefragments.EventsFragment"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events" />
+        tools:layout="@layout/fragment_events" >
+        <action
+            android:id="@+id/action_eventsFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatRoomFragment"
         android:name="pk.cust.events.homefragments.ChatRoomFragment"
@@ -30,4 +34,13 @@
         android:name="pk.cust.events.homefragments.FriendsFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_friends" />
+    <fragment
+        android:id="@+id/eventDetailFragment"
+        android:name="pk.cust.events.homefragments.EventDetailFragment"
+        android:label="fragment_event_detail"
+        tools:layout="@layout/fragment_event_detail" >
+        <action
+            android:id="@+id/action_eventDetailFragment_to_eventsFragment"
+            app:destination="@id/eventsFragment" />
+    </fragment>
 </navigation>

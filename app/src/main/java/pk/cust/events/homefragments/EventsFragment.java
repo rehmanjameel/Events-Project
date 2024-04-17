@@ -137,7 +137,7 @@ public class EventsFragment extends Fragment {
                                     String userDomain = userDocument.getString("domain");
                                     Log.e("user name from posts", userName + ",.,." + userImage);
 
-                                    eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain));
+                                    eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, document.getId()));
 
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
 

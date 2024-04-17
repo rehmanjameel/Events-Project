@@ -67,6 +67,10 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
     public void onBindViewHolder(@NonNull HomeEventsAdapter.ViewHolder holder, int position) {
         HomeEventsModel model = eventsModels.get(position);
 
+        // Reset like button state
+        holder.likeButton.setImageResource(R.drawable.baseline_favorite_border_24);
+        holder.likeButton.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.white), PorterDuff.Mode.SRC_IN);
+
         RequestOptions requestOptions = new RequestOptions()
                 .timeout(60000); // Set the timeout to 60 seconds (adjust as needed)
 
@@ -109,15 +113,17 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                     }
                 })
                 .into(holder.personImage);
-//
+
         holder.userName.setText(model.getUserName());
 
         holder.eventTopic.setText(model.getDescription());
 
         holder.getLikeButtonStatus(model.getPostId(), user_id);
 
+
+        // Set click listener
         holder.likeButton.setOnClickListener(view -> {
-            testClick = true;
+            // Get the correct document reference for the post
             likeReference = db.collection("like").document(model.getPostId());
 
             likeReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -130,6 +136,7 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                                 // User has already liked the post, remove the like
                                 likeReference.update(user_id, FieldValue.delete());
                                 holder.likeButton.setImageResource(R.drawable.baseline_favorite_border_24);
+                                holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.white), PorterDuff.Mode.SRC_IN);
 
                                 holder.getLikeButtonStatus(model.getPostId(), user_id);
                             } else {
@@ -137,24 +144,23 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                                 likeReference.update(user_id, true);
                                 holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
                                 holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
+                                holder.getLikeButtonStatus(model.getPostId(), user_id);
                             }
                         } else {
                             // Document doesn't exist, meaning no likes for this post yet
                             // Add the first like
                             likeReference.set(new HashMap<String, Object>() {{
                                 put(user_id, true);
-                                holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
-                                holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
-
                             }});
+                            holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
+                            holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
+                            holder.getLikeButtonStatus(model.getPostId(), user_id);
                         }
                     } else {
                         // Error occurred, handle it accordingly
                     }
                 }
             });
-
-
         });
 
 
@@ -194,7 +200,6 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
         }
 
         // Method to check if the current user has liked a post
-
         public void getLikeButtonStatus(final String postKey, final String userId) {
             // Build the reference to the likes collection for the specified post ID
             eventLikeRef = db.collection("like").document(postKey);
@@ -204,17 +209,16 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                     if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()) {
-                            //count the number of likes
-
                             if (documentSnapshot.contains(userId)) {
                                 // User has liked the post
-                                likeButton.setImageResource(R.drawable.baseline_favorite_24); // Set filled heart icon when liked
+                                likeButton.setImageResource(R.drawable.baseline_favorite_24);
                                 likeButton.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.red), PorterDuff.Mode.SRC_IN);
+
                                 int totalLikes = documentSnapshot.getData().size();
                                 likesCount.setText(totalLikes + " likes");
                             } else {
                                 // User has not liked the post
-                                likeButton.setImageResource(R.drawable.baseline_favorite_border_24); // Set outline heart icon when not liked
+                                likeButton.setImageResource(R.drawable.baseline_favorite_border_24);
                                 likeButton.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.white), PorterDuff.Mode.SRC_IN);
 
                                 int totalLikes = documentSnapshot.getData().size();

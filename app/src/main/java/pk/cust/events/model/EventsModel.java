@@ -7,14 +7,16 @@ public class EventsModel {
     String eventImage;
     String eventTitle;
     String eventDomain;
+    String postId;
 
-    public EventsModel(String id, String personName, String personImage, String eventImage, String eventTitle, String eventDomain) {
+    public EventsModel(String id, String personName, String personImage, String eventImage, String eventTitle, String eventDomain, String postId) {
         this.id = id;
         this.personName = personName;
         this.personImage = personImage;
         this.eventImage = eventImage;
         this.eventTitle = eventTitle;
         this.eventDomain = eventDomain;
+        this.postId = postId;
     }
 
     public String getId() {
@@ -63,5 +65,14 @@ public class EventsModel {
 
     public void setPersonName(String personName) {
         this.personName = personName;
+    }
+
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 }
