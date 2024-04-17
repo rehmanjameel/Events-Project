@@ -74,6 +74,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             Bundle bundle = new Bundle();
             bundle.putString("user_name", model.getPersonName());
             bundle.putString("user_image", model.getPersonImage());
+            bundle.putString("user_id", model.getId());
             bundle.putString("post_image", model.getEventImage());
             bundle.putString("post_id", model.getPostId());
             bundle.putString("post_description", model.getEventTitle());

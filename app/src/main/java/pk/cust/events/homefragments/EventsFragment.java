@@ -74,6 +74,7 @@ public class EventsFragment extends Fragment {
             }
         });
 
+        binding.progressbar.setVisibility(View.VISIBLE);
         getDataFromFireStore();
 
         return binding.getRoot();
@@ -159,6 +160,7 @@ public class EventsFragment extends Fragment {
                                 if (eventsModelArrayList.size() == 0) {
                                     binding.eventsRV.setVisibility(View.GONE);
                                     binding.noDataText.setVisibility(View.VISIBLE);
+                                    binding.progressbar.setVisibility(View.GONE);
 
                                 } else {
                                     binding.eventsRV.setVisibility(View.VISIBLE);
@@ -166,6 +168,8 @@ public class EventsFragment extends Fragment {
                                     Log.e("events list", String.valueOf(eventsModelArrayList.size()));
                                     eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
                                     binding.eventsRV.setAdapter(eventsAdapter);
+                                    binding.progressbar.setVisibility(View.GONE);
+
                                 }
 
 

@@ -2,6 +2,7 @@ package pk.cust.events.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -10,6 +11,8 @@ import pk.cust.events.databinding.ActivityMainBinding;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         // get fcm token
         getFCMToken();
 
+        // hide bottom bar
+        hideBottomBar();
+
     }
 
     private void getFCMToken() {
@@ -105,6 +111,19 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void hideBottomBar() {
+        navController.addOnDestinationChangedListener(((navController1, navDestination, bundle) -> {
+            if (navDestination.getId() == R.id.eventDetailFragment ||
+            navDestination.getId() == R.id.userDetailFragment) {
+                binding.bottomNavigation.setVisibility(View.GONE);
+                // Change status bar color
+//                Window window = getWindow();
+//                window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            } else {
+                binding.bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        }));
+    }
     @Override
     public void onBackPressed() {
 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".homefragments.EventDetailFragment"
+    tools:context=".homefragments.UserDetailFragment"
     android:background="@drawable/background_gradient">
 
     <LinearLayout
@@ -24,21 +24,22 @@
             android:padding="10dp"
             app:tint="@color/white" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/personImage"
-            android:layout_width="43dp"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/profile"
-            app:civ_border_color="@color/purple_700"
-            app:civ_border_width="1dp" />
+<!--        <de.hdodenhof.circleimageview.CircleImageView-->
+<!--            android:id="@+id/personImage"-->
+<!--            android:layout_width="43dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:src="@drawable/profile"-->
+<!--            app:civ_border_color="@color/purple_700"-->
+<!--            app:civ_border_width="1dp" />-->
 
         <TextView
             android:id="@+id/personName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
-            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textSize="20sp"
             android:textColor="@color/white"
             android:layout_marginEnd="10dp"/>
 
@@ -61,7 +62,7 @@
             app:cardCornerRadius="20dp">
 
             <ImageView
-                android:id="@+id/eventImage"
+                android:id="@+id/personImage"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 android:src="@drawable/newyear"
@@ -70,49 +71,8 @@
 
         </androidx.cardview.widget.CardView>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp">
-
-            <ImageView
-                android:id="@+id/likeIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_favorite_border_24"
-                android:layout_marginStart="10dp"
-                android:layout_alignParentStart="true"
-                app:tint="@color/white"/>
-
-            <ImageView
-                android:id="@+id/discussionIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_forum_24"
-                android:layout_toEndOf="@+id/likeIcon"
-                android:layout_marginStart="20dp"
-                android:visibility="gone"
-                app:tint="@color/white"/>
-
-            <TextView
-                android:id="@+id/eventLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 likes"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginStart="10dp"
-                android:layout_below="@+id/likeIcon"
-                android:visibility="visible"
-                android:layout_alignParentStart="true" />
-
-
-        </RelativeLayout>
-
         <TextView
-            android:id="@+id/eventDomainTitle"
+            android:id="@+id/friendDomainTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Domain:"
@@ -123,7 +83,7 @@
             android:layout_marginTop="20dp"/>
 
         <TextView
-            android:id="@+id/eventDomain"
+            android:id="@+id/friendDomain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Domain"
@@ -136,20 +96,43 @@
             android:background="@color/purple_700"/>
 
         <TextView
-            android:id="@+id/eventTopicTitle"
+            android:id="@+id/friendInterestTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description:"
+            android:text="Interest:"
             android:textSize="16sp"
             android:textColor="@color/black"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
 
         <TextView
-            android:id="@+id/eventTopic"
+            android:id="@+id/friendInterest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Topic"
+            android:text="Interest"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:padding="10dp"
+            android:background="@color/purple_700"/>
+
+        <TextView
+            android:id="@+id/friendEmailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email:"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+
+        <TextView
+            android:id="@+id/friendEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
             android:textSize="18sp"
             android:textColor="@color/black"
             android:textStyle="bold"

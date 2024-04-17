@@ -33,7 +33,11 @@
         android:id="@+id/friendsFragment"
         android:name="pk.cust.events.homefragments.FriendsFragment"
         android:label="fragment_friends"
-        tools:layout="@layout/fragment_friends" />
+        tools:layout="@layout/fragment_friends" >
+        <action
+            android:id="@+id/action_friendsFragment_to_userDetailFragment"
+            app:destination="@id/userDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/eventDetailFragment"
         android:name="pk.cust.events.homefragments.EventDetailFragment"
@@ -42,5 +46,14 @@
         <action
             android:id="@+id/action_eventDetailFragment_to_eventsFragment"
             app:destination="@id/eventsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userDetailFragment"
+        android:name="pk.cust.events.homefragments.UserDetailFragment"
+        android:label="fragment_user_detail"
+        tools:layout="@layout/fragment_user_detail" >
+        <action
+            android:id="@+id/action_userDetailFragment_to_friendsFragment"
+            app:destination="@id/friendsFragment" />
     </fragment>
 </navigation>

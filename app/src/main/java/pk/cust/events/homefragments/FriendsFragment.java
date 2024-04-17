@@ -80,6 +80,7 @@ public class FriendsFragment extends Fragment {
                 friendsAdapter.filterFriends(query);
             }
         });
+        binding.progressbar.setVisibility(View.VISIBLE);
 
         return binding.getRoot();
     }
@@ -116,6 +117,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void getDataFromFireStore() {
+        friendsModelArrayList.clear();
         db.collection("users")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -129,15 +131,24 @@ public class FriendsFragment extends Fragment {
 
                                 friendsModelArrayList.add(new FriendsModel(document.getId(),
                                         document.get("user_image").toString(),
-                                        document.get("user_name").toString(), document.get("domain").toString()));
+                                        document.get("user_name").toString(), document.get("domain").toString(),
+                                        document.getString("interest").toString(),
+                                        document.getString("email").toString(),
+                                        document.getString("phone_no").toString(),
+                                        document.getString("dob").toString(),
+                                        document.getString("address").toString(),
+                                        document.getString("gender").toString()));
                             }
 
-                            if (friendsModelArrayList.size() == 0) {
+                            if (friendsModelArrayList.isEmpty()) {
                                 binding.friendsRV.setVisibility(View.GONE);
                                 binding.noDataText.setVisibility(View.VISIBLE);
+                                binding.progressbar.setVisibility(View.GONE);
+
                             } else {
                                 binding.friendsRV.setVisibility(View.VISIBLE);
                                 binding.noDataText.setVisibility(View.GONE);
+                                binding.progressbar.setVisibility(View.GONE);
 
                                 friendsAdapter = new FriendsAdapter(requireActivity(), friendsModelArrayList);
                                 binding.friendsRV.setAdapter(friendsAdapter);

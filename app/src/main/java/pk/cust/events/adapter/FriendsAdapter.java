@@ -1,6 +1,7 @@
 package pk.cust.events.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +53,17 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
         holder.friendName.setText(model.getFriendName());
         holder.friendDomain.setText(model.getFriendDomain());
+
+        holder.friendClickCard.setOnClickListener(view -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("user_name", model.getFriendName());
+            bundle.putString("user_image", model.getFriendImage());
+            bundle.putString("user_domain", model.getFriendDomain());
+            bundle.putString("user_interest", model.getFriendInterest());
+            bundle.putString("user_email", model.getFriendEmail());
+
+            Navigation.findNavController(view).navigate(R.id.action_friendsFragment_to_userDetailFragment, bundle);
+        });
     }
 
     @Override
@@ -76,12 +90,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView friendImage;
         TextView friendName, friendDomain;
+        CardView friendClickCard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             friendImage = itemView.findViewById(R.id.friendImage);
             friendName = itemView.findViewById(R.id.friendName);
             friendDomain = itemView.findViewById(R.id.friendDomain);
+            friendClickCard = itemView.findViewById(R.id.friendCardClick);
         }
     }
 }

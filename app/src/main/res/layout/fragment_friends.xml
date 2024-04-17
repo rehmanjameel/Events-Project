@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:hint="Search by user name or domain"
             android:textColorHint="#bfbfbf"
-            android:textColor="@color/black"
+            android:textColor="@color/purple_700"
             android:singleLine="true"
             android:imeOptions="actionSearch"
             />
