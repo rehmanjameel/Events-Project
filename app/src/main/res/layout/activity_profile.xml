@@ -69,8 +69,8 @@
 
         </RelativeLayout>
 
-
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/interLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -78,35 +78,11 @@
             android:layout_marginTop="10dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_domain_24"
-                android:layout_margin="10dp"
-                app:tint="@color/purple_500"
-                />
-
-            <TextView
-                android:id="@+id/domainName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Domain"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
-
-            <ImageView
+                android:id="@+id/interestIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_interests_24"
+                android:layout_alignParentStart="true"
                 android:layout_margin="10dp"
                 app:tint="@color/purple_500"
                 />
@@ -118,141 +94,214 @@
                 android:text="Interests"
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/interestIcon"/>
 
             <ImageView
+                android:id="@+id/iconDropDown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_calendar_month_24"
+                android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+                android:layout_alignParentEnd="true"
                 android:layout_margin="10dp"
                 app:tint="@color/purple_500"
                 />
 
-            <TextView
-                android:id="@+id/personDob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DOB"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/minmaxLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
+            android:orientation="vertical"
+            android:visibility="gone">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_email_24"
-                android:layout_margin="10dp"
-                app:tint="@color/purple_500"
-                />
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
 
-            <TextView
-                android:id="@+id/personEmail"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_domain_24"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/domainName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Domain"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Email"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_calendar_month_24"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/personDob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DOB"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_email_24"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/personEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_contact_phone_24"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/personMobile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile No."
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/profile"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/personGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center|start"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_home_24"
+                    android:layout_margin="10dp"
+                    app:tint="@color/purple_500"
+                    />
+
+                <TextView
+                    android:id="@+id/personAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/personalEventsRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_contact_phone_24"
-                android:layout_margin="10dp"
-                app:tint="@color/purple_500"
-                />
-
-            <TextView
-                android:id="@+id/personMobile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mobile No."
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/profile"
-                android:layout_margin="10dp"
-                app:tint="@color/purple_500"
-                />
-
-            <TextView
-                android:id="@+id/personGender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gender"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center|start"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_home_24"
-                android:layout_margin="10dp"
-                app:tint="@color/purple_500"
-                />
-
-            <TextView
-                android:id="@+id/personAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/noDataText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Data found"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:progress="100"
+        android:visibility="gone"
+        android:indeterminateTint="@color/purple_700"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/logoutButton"
