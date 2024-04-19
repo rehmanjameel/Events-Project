@@ -17,11 +17,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -41,6 +44,9 @@ public class EventsFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
+
+    DocumentReference eventLikeRef;
+    int totalLikes;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -125,8 +131,7 @@ public class EventsFragment extends Fragment {
                         String userId =  document.getString("userId");
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
-
-                        Log.e("userid from posts", userId + ",.,." + description + ",.,." + imageUrl);
+                        String postId = document.getId();
 
                         // Retrieve additional user details from the 'users' collection
                         Task<Object> userTask = db.collection("users")
@@ -136,11 +141,9 @@ public class EventsFragment extends Fragment {
                                     String userName = userDocument.getString("user_name");
                                     String userImage = userDocument.getString("user_image");
                                     String userDomain = userDocument.getString("domain");
-                                    Log.e("user name from posts", userName + ",.,." + userImage);
 
-                                    eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, document.getId()));
-
-                                    Log.e("user name from posts123", userName + ",.,." + userImage);
+                                    // Get the like count for the post
+                                    getLikeCount(postId, userId, userName, userImage, userDomain, imageUrl, description);
 
                                     return Tasks.forResult(null);
                                 })
@@ -160,19 +163,12 @@ public class EventsFragment extends Fragment {
                                 if (eventsModelArrayList.size() == 0) {
                                     binding.eventsRV.setVisibility(View.GONE);
                                     binding.noDataText.setVisibility(View.VISIBLE);
-                                    binding.progressbar.setVisibility(View.GONE);
-
                                 } else {
                                     binding.eventsRV.setVisibility(View.VISIBLE);
                                     binding.noDataText.setVisibility(View.GONE);
-                                    Log.e("events list", String.valueOf(eventsModelArrayList.size()));
                                     eventsAdapter = new EventsAdapter(requireActivity(), eventsModelArrayList);
                                     binding.eventsRV.setAdapter(eventsAdapter);
-                                    binding.progressbar.setVisibility(View.GONE);
-
                                 }
-
-
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -180,5 +176,28 @@ public class EventsFragment extends Fragment {
                     // Handle failure
                 });
     }
+
+    private void getLikeCount(String postId, String userId, String userName, String userImage, String userDomain, String imageUrl, String description) {
+        // Build the reference to the likes collection for the specified post ID
+        eventLikeRef = db.collection("like").document(postId);
+        eventLikeRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    int totalLikes = documentSnapshot.getData().size();
+                    // Check if the post has more than 10 likes
+                    if (totalLikes > 1) {
+                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+                    }
+                } else {
+                    // Document doesn't exist, meaning no likes for this post yet
+                    // Handle accordingly, e.g., set default like button state
+                }
+            } else {
+                // Error occurred, handle it accordingly
+            }
+        });
+    }
+
 
 }
