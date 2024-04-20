@@ -179,7 +179,7 @@ public class CreateEventActivity extends AppCompatActivity {
             db.collection("posts")
                     .add(post)
                     .addOnSuccessListener(documentReference -> {
-                        addDummyLike(documentReference.getId());
+//                        addDummyLike(documentReference.getId());
                         getTokensFromFirestore(App.getString("user_name"), description);
                         Toast.makeText(this, "Post uploaded successfully!", Toast.LENGTH_LONG).show();
                         onBackPressed();
@@ -199,7 +199,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
             // Add a dummy like document within the "likes" subcollection of the post
             db.collection("posts").document(postId)
-                    .collection("likes").document(userId)
+//                    .collection("likes").document(userId)
                     .set(new HashMap<>()) // You can set any dummy data or leave it empty
                     .addOnSuccessListener(aVoid -> {
                         // Dummy like added successfully
@@ -297,13 +297,24 @@ public class CreateEventActivity extends AppCompatActivity {
     private void pickImage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.wtf("here", "version");
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_DENIED) {
-                requestPermissions();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                        == PackageManager.PERMISSION_DENIED) {
+                    requestPermissions();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    activityResultLauncher.launch(intent);
+                }
             } else {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                activityResultLauncher.launch(intent);
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED) {
+                    requestPermissions();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    activityResultLauncher.launch(intent);
+                }
             }
         } else {
             Log.wtf("Here", "Pick image");
@@ -348,9 +359,17 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         // Launch the permission request
-        String[] permissionsToRequest = new String[]{
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
+        String[] permissionsToRequest;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest = new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES
+            };
+        } else {
+            permissionsToRequest = new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+        }
+
         requestMultiplePermissions.launch(permissionsToRequest);
     }
 

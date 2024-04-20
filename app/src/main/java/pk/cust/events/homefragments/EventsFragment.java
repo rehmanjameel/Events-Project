@@ -133,6 +133,7 @@ public class EventsFragment extends Fragment {
                         String imageUrl = document.getString("imageUrl");
                         String postId = document.getId();
 
+                        getLikeCount(postId);
                         // Retrieve additional user details from the 'users' collection
                         Task<Object> userTask = db.collection("users")
                                 .document(userId)
@@ -141,9 +142,11 @@ public class EventsFragment extends Fragment {
                                     String userName = userDocument.getString("user_name");
                                     String userImage = userDocument.getString("user_image");
                                     String userDomain = userDocument.getString("domain");
-
+                                    if (totalLikes > 1) {
+                                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+                                    }
                                     // Get the like count for the post
-                                    getLikeCount(postId, userId, userName, userImage, userDomain, imageUrl, description);
+//                                    getLikeCount(postId, userId, userName, userImage, userDomain, imageUrl, description);
 
                                     return Tasks.forResult(null);
                                 })
@@ -177,18 +180,18 @@ public class EventsFragment extends Fragment {
                 });
     }
 
-    private void getLikeCount(String postId, String userId, String userName, String userImage, String userDomain, String imageUrl, String description) {
+    private void getLikeCount(String postId) {
         // Build the reference to the likes collection for the specified post ID
         eventLikeRef = db.collection("like").document(postId);
         eventLikeRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
-                    int totalLikes = documentSnapshot.getData().size();
+                    totalLikes = documentSnapshot.getData().size();
                     // Check if the post has more than 10 likes
-                    if (totalLikes > 1) {
-                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
-                    }
+//                    if (totalLikes > 0) {
+//                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+//                    }
                 } else {
                     // Document doesn't exist, meaning no likes for this post yet
                     // Handle accordingly, e.g., set default like button state

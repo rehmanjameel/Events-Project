@@ -157,13 +157,24 @@ public class RegistrationActivity extends AppCompatActivity {
     private void pickImage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.wtf("here", "version");
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_DENIED) {
-                requestPermissions();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                        == PackageManager.PERMISSION_DENIED) {
+                    requestPermissions();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    activityResultLauncher.launch(intent);
+                }
             } else {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                activityResultLauncher.launch(intent);
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED) {
+                    requestPermissions();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    activityResultLauncher.launch(intent);
+                }
             }
         } else {
             Log.wtf("Here", "Pick image");
@@ -208,9 +219,17 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         // Launch the permission request
-        String[] permissionsToRequest = new String[]{
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
+        String[] permissionsToRequest;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest = new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES
+            };
+        } else {
+            permissionsToRequest = new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+        }
+
         requestMultiplePermissions.launch(permissionsToRequest);
     }
 
