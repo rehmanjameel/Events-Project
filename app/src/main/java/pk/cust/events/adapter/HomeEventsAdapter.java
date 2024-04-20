@@ -216,6 +216,8 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
 
                                 int totalLikes = documentSnapshot.getData().size();
                                 likesCount.setText(totalLikes + " likes");
+                                saveTotalLikes(postKey, totalLikes);
+
                             } else {
                                 // User has not liked the post
                                 likeButton.setImageResource(R.drawable.baseline_favorite_border_24);
@@ -223,6 +225,8 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
 
                                 int totalLikes = documentSnapshot.getData().size();
                                 likesCount.setText(totalLikes + " likes");
+                                saveTotalLikes(postKey, totalLikes);
+
                             }
                         } else {
                             // Document doesn't exist, meaning no likes for this post yet
@@ -233,6 +237,20 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                     }
                 }
             });
+        }
+
+        private void saveTotalLikes(String postId, int totalLikes) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Update the token field for the user
+            db.collection("posts").document(postId)
+                    .update("total_likes", totalLikes)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("TAG", "Token saved successfully for user: " + postId);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("TAG", "Failed to save token for user: " + postId, e);
+                    });
         }
 
     }

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,6 +33,8 @@ import pk.cust.events.model.EventsModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventsFragment extends Fragment {
 
@@ -128,31 +129,37 @@ public class EventsFragment extends Fragment {
                     List<Task<Object>> tasks = new ArrayList<>(); // List to store user detail tasks
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String userId =  document.getString("userId");
+                        String userId = document.getString("userId");
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
                         String postId = document.getId();
 
-                        getLikeCount(postId);
-                        // Retrieve additional user details from the 'users' collection
                         Task<Object> userTask = db.collection("users")
                                 .document(userId)
                                 .get()
-                                .onSuccessTask(userDocument -> {
-                                    String userName = userDocument.getString("user_name");
-                                    String userImage = userDocument.getString("user_image");
-                                    String userDomain = userDocument.getString("domain");
-                                    if (totalLikes > 1) {
-                                        eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+                                .continueWithTask(userDocumentTask -> {
+                                    if (userDocumentTask.isSuccessful()) {
+                                        DocumentSnapshot userDocument = userDocumentTask.getResult();
+                                        if (userDocument.exists()) {
+                                            String userName = userDocument.getString("user_name");
+                                            String userImage = userDocument.getString("user_image");
+                                            String userDomain = userDocument.getString("domain");
+                                            int totalLikes = 0;
+                                            if (document.contains("total_likes")) {
+                                                totalLikes = document.getLong("total_likes").intValue();
+                                            }
+                                            // Add event only if total likes > 0
+                                            if (totalLikes > 1) {
+                                                eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+                                            }
+                                        } else {
+                                            Log.e("Error", "User document does not exist");
+                                        }
+                                    } else {
+                                        Exception e = userDocumentTask.getException();
+                                        Log.e("Error", "Error getting user document: " + (e != null ? e.getMessage() : ""));
                                     }
-                                    // Get the like count for the post
-//                                    getLikeCount(postId, userId, userName, userImage, userDomain, imageUrl, description);
-
-                                    return Tasks.forResult(null);
-                                })
-                                .addOnFailureListener(e -> {
-                                    binding.progressbar.setVisibility(View.GONE);
-                                    // Handle failure
+                                    return null;
                                 });
 
                         tasks.add(userTask);
@@ -162,8 +169,7 @@ public class EventsFragment extends Fragment {
                     Tasks.whenAllComplete(tasks)
                             .addOnCompleteListener(task -> {
                                 binding.progressbar.setVisibility(View.GONE);
-
-                                if (eventsModelArrayList.size() == 0) {
+                                if (eventsModelArrayList.isEmpty()) {
                                     binding.eventsRV.setVisibility(View.GONE);
                                     binding.noDataText.setVisibility(View.VISIBLE);
                                 } else {
@@ -179,6 +185,7 @@ public class EventsFragment extends Fragment {
                     // Handle failure
                 });
     }
+
 
     private void getLikeCount(String postId) {
         // Build the reference to the likes collection for the specified post ID
