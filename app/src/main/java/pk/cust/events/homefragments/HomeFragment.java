@@ -87,6 +87,8 @@ public class HomeFragment extends Fragment {
                 .into(binding.profilePicture);
 
         binding.profilePicture.setOnClickListener(view -> {
+            App.IS_PROFILE = true;
+
             Intent intent = new Intent(requireActivity(), ProfileActivity.class);
             startActivity(intent);
         });

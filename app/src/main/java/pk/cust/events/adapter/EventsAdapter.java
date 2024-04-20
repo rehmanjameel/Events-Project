@@ -70,6 +70,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.eventDomain.setText(model.getEventDomain());
         holder.personName.setText(model.getPersonName());
 
+        if (App.IS_PROFILE) {
+            holder.personImage.setVisibility(View.GONE);
+        }
+
         holder.eventCard.setOnClickListener(view -> {
             Bundle bundle = new Bundle();
             bundle.putString("user_name", model.getPersonName());

@@ -1,8 +1,10 @@
 package pk.cust.events.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
+    private boolean expanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,22 +69,38 @@ public class ProfileActivity extends AppCompatActivity {
         binding.personGender.setText(App.getString("gender"));
         binding.personAddress.setText(App.getString("address"));
 
-//        ImageView backArrow = findViewById(R.id.backArrow);
-//        backArrow.setOnClickListener(view -> {
-//            onBackPressed();
-//        });
-        binding.backArrow.setOnClickListener(view -> {
-            onBackPressed();
+        binding.editButton.setOnClickListener(view -> {
+            //            Log.e("is it in the ", "else part1 of validation");
+            Intent intent = new Intent(this, Editprofile.class);
+            startActivity(intent);
         });
-
-        binding.logoutButton.setOnClickListener(view -> {
-            App.logout();
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+        binding.backArrow.setOnClickListener(view -> {
+            App.IS_PROFILE = false;
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         });
+
+        binding.iconDropDown.setOnClickListener(view -> {
+
+            if (!expanded) {
+                binding.minmaxLayout.setVisibility(View.VISIBLE);
+                expanded = true;
+                binding.iconDropDown.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24);
+            } else {
+                binding.minmaxLayout.setVisibility(View.GONE);
+                expanded = false;
+                binding.iconDropDown.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24);
+
+            }
+        });
+
+        binding.logoutButton.setOnClickListener(view -> {
+
+            logout();
+        });
+
 
         getDataFromFireStore();
     }
@@ -105,28 +124,6 @@ public class ProfileActivity extends AppCompatActivity {
                             eventsModelArrayList.add(new EventsModel(userId, "", "", imageUrl, description, "", document.getId()));
 
                         }
-                        // Retrieve additional user details from the 'users' collection
-//                        Task<Object> userTask = db.collection("users")
-//                                .document(userId)
-//                                .get()
-//                                .onSuccessTask(userDocument -> {
-//                                    String userName = userDocument.getString("user_name");
-//                                    String userImage = userDocument.getString("user_image");
-//                                    String userDomain = userDocument.getString("domain");
-//                                    Log.e("user name from posts", userName + ",.,." + userImage);
-//
-//                                    eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, document.getId()));
-//
-//                                    Log.e("user name from posts123", userName + ",.,." + userImage);
-//
-//                                    return Tasks.forResult(null);
-//                                })
-//                                .addOnFailureListener(e -> {
-//                                    binding.progressbar.setVisibility(View.GONE);
-//                                    // Handle failure
-//                                });
-//
-//                        tasks.add(userTask);
                     }
 
                     // When all user detail tasks are complete, update the UI
@@ -156,5 +153,43 @@ public class ProfileActivity extends AppCompatActivity {
                     binding.progressbar.setVisibility(View.GONE);
                     // Handle failure
                 });
+    }
+
+    private void logout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Set the message show for the Alert time
+        builder.setMessage("Do you want to logout?");
+
+        // Set Alert Title
+        builder.setTitle("Alert !");
+
+        // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
+        builder.setCancelable(false);
+
+        builder.setIcon(R.drawable.baseline_warning_amber_24);
+
+        // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
+        builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+            // When the user click yes button then app will close
+            App.logout();
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        });
+
+        // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
+        builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+            // If user click no then dialog box is canceled.
+            dialog.cancel();
+        });
+
+        // Create the Alert dialog
+        AlertDialog alertDialog = builder.create();
+        // Show the Alert Dialog box
+        alertDialog.show();
+
     }
 }

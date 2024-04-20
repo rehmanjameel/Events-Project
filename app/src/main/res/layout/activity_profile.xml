@@ -36,8 +36,9 @@
                 android:id="@+id/profilePicture"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:src="@drawable/profile"
+                android:layout_marginTop="10dp"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="1dp" />
 
@@ -52,6 +53,43 @@
                 android:layout_marginTop="20dp"
                 android:textSize="16sp"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profileName"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Logout"
+                    android:textSize="14sp"
+                    android:drawableEnd="@drawable/baseline_logout_24"
+                    android:drawableTint="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/red"
+                    app:cornerRadius="10dp"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Edit Profile"
+                    android:textSize="14sp"
+                    android:drawableEnd="@drawable/baseline_edit_24"
+                    android:drawableTint="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/transparent_light_orange"
+                    app:cornerRadius="10dp"
+                    />
+
+            </LinearLayout>
             <ImageView
                 android:id="@+id/editProfile"
                 android:layout_width="wrap_content"
@@ -95,6 +133,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:layout_toStartOf="@id/iconDropDown"
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/interestIcon"/>
 
@@ -109,6 +148,15 @@
                 />
 
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/noDataText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Data found"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"/>
 
         <LinearLayout
             android:id="@+id/minmaxLayout"
@@ -273,25 +321,22 @@
 
             </LinearLayout>
 
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/personalEventsRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
-            android:layout_marginTop="10dp"/>
+            />
+
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/noDataText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No Data found"
-        android:visibility="gone"
-        android:layout_centerInParent="true"/>
+
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -303,19 +348,6 @@
         android:indeterminateTint="@color/purple_700"
         />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/logoutButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:textSize="14sp"
-        android:drawableEnd="@drawable/baseline_logout_24"
-        android:drawableTint="@color/white"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        app:cornerRadius="10dp"
-        />
+
 
 </RelativeLayout>

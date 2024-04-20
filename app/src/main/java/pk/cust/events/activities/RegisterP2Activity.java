@@ -170,24 +170,6 @@ public class RegisterP2Activity extends AppCompatActivity {
         // set dialog non cancelable
         builder.setCancelable(false);
 
-//        builder.setMultiChoiceItems(interestsTopicsList, selectedLanguage, new DialogInterface.OnMultiChoiceClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-//                // check condition
-//                if (b) {
-//                    // when checkbox selected
-//                    // Add position  in lang list
-//                    langList.add(i);
-//                    // Sort array list
-//                    Collections.sort(langList);
-//                } else {
-//                    // when checkbox unselected
-//                    // Remove position from langList
-//                    langList.remove(Integer.valueOf(i));
-//                }
-//            }
-//        });
-
         builder.setMultiChoiceItems(
                 interestsTopicsList.toArray(new CharSequence[interestsTopicsList.size()]),
                 selectedLanguage,

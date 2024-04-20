@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_700"
-    tools:context="pk.cust.events.activities.RegisterP2Activity">
-
+    tools:context=".activities.Editprofile"
+    android:background="@color/purple_700">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,7 +14,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <View
                 android:id="@+id/topView"
@@ -41,22 +42,50 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
                     android:orientation="vertical">
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/selectImage"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:civ_border_width="1dp"
+                        android:src="@drawable/baseline_account_circle_24"
+                        app:civ_border_color="@color/black" />
+
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/domainsMenu"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:id="@+id/userNameTIL"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:hint="Domains">
+                        android:layout_marginTop="10dp">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/domainsDropDown"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/userNameTIET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:text="Select" />
+                            android:hint="User name"
+                            android:inputType="textCapWords"
+                            android:maxLines="1" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phoneNoTIL"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/phoneNoTIET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="0123456789+"
+                            android:hint="Phone No."
+                            android:inputType="number"
+                            android:maxLength="13"
+                            android:maxLines="1" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,63 +107,24 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/dobTIL"
+                        android:id="@+id/currentAddressTIL"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:endIconMode="custom"
-                        app:endIconDrawable="@drawable/baseline_calendar_month_24">
+                        android:layout_marginTop="5dp">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/dobTIET"
+                            android:id="@+id/currentAddressTIET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Date of Birth"
-                            android:enabled="false"
-                            android:clickable="false"
-                            android:maxLines="1"/>
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/emailTIL"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="0dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/emailTIET"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Email"
-                            android:inputType="textEmailAddress"
-                            android:maxLines="1" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/passwordTIL"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="0dp"
-                        app:helperText="Note: password should contain on min 6 characters, 1 capital 'ABC', 1 small 'abc' letter, 1 digit '0123', and 1 special character '@%#*..'"
-                        app:helperTextTextColor="@color/teal_700"
-                        app:passwordToggleEnabled="true">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/passwordTIET"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Password:e.g, Test@123"
-                            android:inputType="textPassword"
-                            android:maxLines="1" />
+                            android:gravity="top"
+                            android:maxLines="3"
+                            android:hint="Country"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/signupId"
+                        android:id="@+id/updateButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -142,34 +132,8 @@
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="Signup"
+                        android:text="Update"
                         app:cornerRadius="10dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Already have an account?"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/loginUser"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:text="Login"
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -178,6 +142,16 @@
         </RelativeLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:progress="100"
+        android:visibility="gone"
+        android:indeterminateTint="@color/purple_500"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -204,7 +178,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="24dp"
-            android:text="@string/register"
+            android:text="Edit Profile"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:gravity="top"
@@ -228,15 +202,5 @@
         <!--            />-->
 
     </RelativeLayout>
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:progress="100"
-        android:visibility="gone"
-        android:indeterminateTint="@color/purple_500"
-        />
 
 </RelativeLayout>

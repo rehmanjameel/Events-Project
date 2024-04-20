@@ -23,6 +23,7 @@ public class App extends Application {
 
     public static Context context;
     private static final String KEY_LOGGED_IN = "logged_in";
+    public static boolean IS_PROFILE = false;
     public static final String USER_NAME = "USER_NAME";
     public static final String PHONE_NUMBER = "PHONE_NUMBER";
     public static final String ADDRESS = "ADDRESS";
