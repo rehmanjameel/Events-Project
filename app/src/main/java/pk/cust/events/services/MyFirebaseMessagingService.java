@@ -27,6 +27,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        // Check if the message contains data payload
+        if (remoteMessage.getData().size() > 0) {
+            String chatRoomId = remoteMessage.getData().get("chatRoomId");
+            // Handle the chat room ID here and navigate user to the chat room
+        }
+
         // Check if message contains data payload.
         if (!remoteMessage.getData().isEmpty()) {
             // Handle data payload of the message.
@@ -36,6 +42,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             // Process the message (e.g., show notification).
             NotificationHelper.showNotification(App.context, title, message);
+            saveUserNotifications(title, message);
+
         }
 
         // Check if message contains notification payload.

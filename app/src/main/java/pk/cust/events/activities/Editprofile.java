@@ -98,6 +98,10 @@ public class Editprofile extends AppCompatActivity {
 
         setUpInterest();
 
+        binding.selectImage.setOnClickListener(view -> {
+            pickImage();
+        });
+
         binding.updateButton.setOnClickListener(view -> {
             checkValidation();
         });
@@ -347,11 +351,7 @@ public class Editprofile extends AppCompatActivity {
                     Log.d("TAG", "User data updated successfully.");
                     binding.progressbar.setVisibility(View.GONE);
                     getDataFromFireStore();
-                    Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Editprofile.this, ProfileActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
+
 
                 })
                 .addOnFailureListener(e -> {
@@ -364,15 +364,18 @@ public class Editprofile extends AppCompatActivity {
     }
 
     // Method to update user data with provided values
-    private void updateUser(String interestDropDown, String name, String phoneNo, String address, String imageUri) {
+    private void updateUser(String interestDropDown, String name, String phoneNo, String address, String uri) {
         // Create a map to store the updated values
         Map<String, Object> newData = new HashMap<>();
         newData.put("user_name", name);
         newData.put("phone_no", phoneNo);
         newData.put("address", address);
-        if (imageUri != null) {
-            newData.put("user_image", imageUri);
+        if (imageUri != null && !imageUri.equals("")) {
+            Log.e("user image of profile12", uri);
+            newData.put("user_image", uri);
         } else {
+            Log.e("user image of profile121", App.getString("user_image"));
+
             newData.put("user_image", App.getString("user_image"));
         }
         newData.put("interest", interestDropDown);
@@ -409,6 +412,11 @@ public class Editprofile extends AppCompatActivity {
                                 App.saveString("email", String.valueOf(document.get("email")));
 
                                 binding.progressbar.setVisibility(View.GONE);
+                                Toast.makeText(Editprofile.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(Editprofile.this, ProfileActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
                             }
                         } else {
                             binding.progressbar.setVisibility(View.GONE);

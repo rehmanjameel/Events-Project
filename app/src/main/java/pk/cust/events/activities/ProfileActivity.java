@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import java.util.List;
 import pk.cust.events.R;
 import pk.cust.events.adapter.EventsAdapter;
 import pk.cust.events.databinding.ActivityProfileBinding;
+import pk.cust.events.homefragments.EventDetailFragment;
 import pk.cust.events.model.EventsModel;
 import pk.cust.events.utils.App;
 
@@ -52,22 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         binding.personalEventsRV.setLayoutManager(layoutManager);
 
-        Glide.with(this)
-                .load(App.getString("user_image"))
-                .centerCrop()
-                .error(R.drawable.baseline_account_circle_24)
-                .placeholder(R.drawable.baseline_account_circle_24)
-                .into(binding.profilePicture);
 
-        Log.e("user name of profile", App.getString("user_name"));
-        binding.profileName.setText(App.getString("user_name"));
-        binding.domainName.setText(App.getString("domain"));
-        binding.interestName.setText(App.getString("interest"));
-        binding.personEmail.setText(App.getString("email"));
-        binding.personMobile.setText(App.getString("phone_no"));
-        binding.personDob.setText(App.getString("dob"));
-        binding.personGender.setText(App.getString("gender"));
-        binding.personAddress.setText(App.getString("address"));
 
         binding.editButton.setOnClickListener(view -> {
             //            Log.e("is it in the ", "else part1 of validation");
@@ -101,6 +89,30 @@ public class ProfileActivity extends AppCompatActivity {
             logout();
         });
 
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                eventsAdapter.setOnItemClickListener(new EventsAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Bundle data) {
+                        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+
+                        // Create a new instance of the fragment
+                        EventDetailFragment fragment = new EventDetailFragment();
+                        fragment.setArguments(data);
+
+                        // Replace the current fragment with the new one
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, fragment)
+                                .addToBackStack(null) // Optional: Add to back stack for navigation
+                                .commit();
+
+                        // Make the fragment_container visible
+                    }
+                });
+
+            }
+        }, 5000);
 
         getDataFromFireStore();
     }
@@ -192,4 +204,29 @@ public class ProfileActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Glide.with(this)
+                .load(App.getString("user_image"))
+                .centerCrop()
+                .error(R.drawable.baseline_account_circle_24)
+                .placeholder(R.drawable.baseline_account_circle_24)
+                .into(binding.profilePicture);
+
+        Log.e("user name of profile", App.getString("user_name"));
+        Log.e("user image of profile", App.getString("user_image"));
+        binding.profileName.setText(App.getString("user_name"));
+        binding.domainName.setText(App.getString("domain"));
+        binding.interestName.setText(App.getString("interest"));
+        binding.personEmail.setText(App.getString("email"));
+        binding.personMobile.setText(App.getString("phone_no"));
+        binding.personDob.setText(App.getString("dob"));
+        binding.personGender.setText(App.getString("gender"));
+        binding.personAddress.setText(App.getString("address"));
+    }
+
+
+
 }

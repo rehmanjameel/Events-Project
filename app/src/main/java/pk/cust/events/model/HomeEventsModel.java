@@ -11,8 +11,7 @@ public class HomeEventsModel {
     private String userImage;
     private String description;
     private String imageUrl;
-    private int likesCount;
-    private List<String> likedBy;
+    private String domain;
 
 
 //    public HomeEventsModel(String userId, String userName, String userImage, String description,
@@ -74,23 +73,11 @@ public class HomeEventsModel {
         this.imageUrl = imageUrl;
     }
 
-    public int getLikesCount() {
-        return likesCount;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
-    }
-
-    public List<String> getLikedBy() {
-        return likedBy;
-    }
-
-    public void setLikedBy(List<String> likedBy) {
-        this.likedBy = likedBy;
-    }
-
-    public boolean isLiked(String currentUserId) {
-        return likedBy != null && likedBy.contains(currentUserId);
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }

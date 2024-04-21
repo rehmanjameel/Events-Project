@@ -3,6 +3,7 @@ package pk.cust.events.adapter;
 import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +38,7 @@ import com.google.firebase.firestore.Transaction;
 import pk.cust.events.R;
 import pk.cust.events.model.HomeEventsModel;
 import pk.cust.events.utils.App;
+import pk.cust.events.utils.ChatRoomInvitationSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,6 +164,30 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                     }
                 }
             });
+        });
+
+        Log.e("user names", model.getUserName() + ",.,."+App.getString("user_name"));
+        if (!App.getString("user_name").equals(model.getUserName())) {
+            Log.e("user names121", model.getUserName() + ",.,."+App.getString("user_name"));
+            holder.chatImage.setVisibility(View.GONE);
+        } else {
+            holder.chatImage.setVisibility(View.VISIBLE);
+        }
+
+        // chat room functionality
+        holder.chatImage.setOnClickListener(view -> {
+            App.IS_CHAT_FROM_HOME = true;
+            Bundle bundle = new Bundle();
+            bundle.putString("user_name", model.getUserName());
+            bundle.putString("user_image", model.getUserImage());
+            bundle.putString("user_id", model.getUserId());
+            bundle.putString("post_image", model.getImageUrl());
+            bundle.putString("post_id", model.getPostId());
+            bundle.putString("post_description", model.getDescription());
+            bundle.putString("post_domain", model.getDomain());
+
+            Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventDetailFragment, bundle);
+
         });
 
 

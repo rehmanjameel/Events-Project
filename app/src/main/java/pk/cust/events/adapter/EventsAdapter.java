@@ -37,6 +37,18 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private ArrayList<EventsModel> eventsList;
     private ArrayList<EventsModel> filteredList;
 
+    private OnItemClickListener mListener;
+
+    // Interface for item click listener
+    public interface OnItemClickListener {
+        void onItemClick(Bundle data);
+    }
+
+    // Setter method for the click listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
     public EventsAdapter(Context context, ArrayList<EventsModel> eventsList) {
         this.context = context;
         this.eventsList = eventsList;
@@ -83,7 +95,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             bundle.putString("post_id", model.getPostId());
             bundle.putString("post_description", model.getEventTitle());
             bundle.putString("post_domain", model.getEventDomain());
-            Navigation.findNavController(view).navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle);
+            if (App.IS_PROFILE) {
+                if (mListener != null) {
+                    mListener.onItemClick(bundle);
+                }
+            } else {
+                Navigation.findNavController(view).navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle);
+            }
         });
     }
 

@@ -193,23 +193,6 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
-    private void addDummyLike(String postId) {
-        if (currentUser != null) {
-            String userId = App.getString("document_id");
-
-            // Add a dummy like document within the "likes" subcollection of the post
-            db.collection("posts").document(postId)
-//                    .collection("likes").document(userId)
-                    .set(new HashMap<>()) // You can set any dummy data or leave it empty
-                    .addOnSuccessListener(aVoid -> {
-                        // Dummy like added successfully
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle failure
-                    });
-        }
-    }
-
     private void getTokensFromFirestore(String title, String body) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -219,9 +202,12 @@ public class CreateEventActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String userId = document.getId();
                         String token = document.getString("token");
-                        if (token != null && !userId.equals(App.getString("document_id"))) {
+                        String domain = document.getString("domain");
+                        if (token != null && domain != null && !userId.equals(App.getString("document_id"))) {
                             Log.e("user token and id", userId + " ,.," + token);
-                            tokens.add(token);
+                            if (domain.equals(App.getString("domain"))) {
+                                tokens.add(token);
+                            }
                             // Send notification using 'token' for each user
                         } else {
                             Log.d("TAG", "No token found for user: " + userId);

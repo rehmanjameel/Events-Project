@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment {
                                         homeEventsModel.setUserImage(userImage);
                                         homeEventsModel.setDescription(description);
                                         homeEventsModel.setImageUrl(imageUrl);
-//                                        homeEventsModel.setLikesCount(0);
+                                        homeEventsModel.setDomain(userDomain);
                                         eventsModelArrayList.add(homeEventsModel);
                                     }
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
@@ -166,25 +166,6 @@ public class HomeFragment extends Fragment {
                     binding.progressbar.setVisibility(View.GONE);
                     // Handle failure
                 });
-    }
-
-    // Method to get the likes count for a post
-    private Task<Integer> fetchLikesCount(String postId, String userId) {
-        DocumentReference postRef = db.collection("posts").document(postId).collection("likes").document(userId);
-
-        return postRef.get().continueWith(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (documentSnapshot.exists()) {
-                    long likesCount = documentSnapshot.getLong("dummyField"); // Field name doesn't matter, just need to get a non-null document
-                    return (int) likesCount; // Return likes count
-                } else {
-                    return 0; // Return 0 if "likes" subcollection doesn't exist
-                }
-            } else {
-                return 0; // Return 0 on failure
-            }
-        });
     }
 
     @Override
