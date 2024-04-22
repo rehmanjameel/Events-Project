@@ -22,7 +22,7 @@ import okhttp3.Response;
 public class ChatRoomInvitationSender {
     private static List<String> tokens = new ArrayList<>();
 
-    public static void getTokensFromFireStore(String title, String body, String desc, String chatRoomId) {
+    public static void getTokensFromFireStore(String title, String body, String chatRoomId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users")
@@ -42,7 +42,7 @@ public class ChatRoomInvitationSender {
                             Log.d("TAG", "No token found for user: " + userId);
                         }
                     }
-                    sendNotification(title, body, chatRoomId, tokens, desc);
+                    sendNotification(title, body, chatRoomId, tokens);
 
                 })
                 .addOnFailureListener(e -> {
@@ -50,7 +50,7 @@ public class ChatRoomInvitationSender {
                 });
     }
 
-    public static void sendNotification(String title, String body, String chatRoomId, List<String> deviceTokens, String desc) {
+    public static void sendNotification(String title, String body, String chatRoomId, List<String> deviceTokens) {
 
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
@@ -60,8 +60,8 @@ public class ChatRoomInvitationSender {
             JSONObject jsonNotify = new JSONObject();
             try {
                 jsonNotify.put("title", "Ticket invitation!");
-                jsonNotify.put("body", App.getString("user_name") + " sent you a ticket to join chat on their topic"
-                        + desc + "(" + body + ")");
+                jsonNotify.put("body", App.getString("user_name") + " sent you a ticket to join chat on their topic "
+                        + title + "(" + body + ")");
 
                 JSONObject dataJson = new JSONObject();
                 dataJson.put("chatRoomId", chatRoomId);

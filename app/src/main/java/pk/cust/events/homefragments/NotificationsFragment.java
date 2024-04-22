@@ -71,13 +71,16 @@ public class NotificationsFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (QueryDocumentSnapshot snapshot :
                                 task.getResult()) {
-                            String title = snapshot.get("title").toString();
-                            String description = snapshot.get("body").toString();
+                            if (snapshot != null) {
+                                String title = snapshot.getString("title");
+                                String description = snapshot.getString("body");
 
-                            Log.e("notifications get data", title + " .,." + description);
-                            Log.e("notifications get data", title + " .,." + snapshot.getId());
+                                Log.e("notifications get data", title + " .,." + description);
+                                Log.e("notifications get data", title + " .,." + snapshot.getId());
 
-                            notificationsModelList.add(new NotificationsModel(snapshot.getId().toString(), title, description));
+                                notificationsModelList.add(new NotificationsModel(snapshot.getId(), title, description));
+                            }
+
                         }
 
                         adapter = new NotificationsAdapter(requireActivity(), notificationsModelList);

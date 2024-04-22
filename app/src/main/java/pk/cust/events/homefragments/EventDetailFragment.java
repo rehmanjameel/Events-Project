@@ -68,8 +68,6 @@ public class EventDetailFragment extends Fragment {
         return binding.getRoot();
     }
 
-
-
     public void updateData(Bundle dataBundle) {
         if (getArguments() != null) {
             binding.personName.setText(dataBundle.getString("user_name"));
@@ -91,9 +89,13 @@ public class EventDetailFragment extends Fragment {
             getLikeButtonStatus(dataBundle.getString("post_id"),
                     dataBundle.getString("user_id"));
 
-            createChatRoom(dataBundle.getString("post_id"), dataBundle.getString("user_id"),
-                    dataBundle.getString("user_name"), dataBundle.getString("post_domain"),
-                    dataBundle.getString("post_description"));
+            if (App.IS_CHAT_FROM_HOME || App.IS_PROFILE) {
+                createChatRoom(dataBundle.getString("post_id"), dataBundle.getString("user_id"),
+                        dataBundle.getString("user_name"), dataBundle.getString("post_domain"),
+                        dataBundle.getString("post_description"));
+            } else {
+
+            }
         }
     }
 
@@ -150,7 +152,7 @@ public class EventDetailFragment extends Fragment {
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
                     binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-                    ChatRoomInvitationSender.getTokensFromFireStore(userName, domain, desc, chatRoomId);
+                    ChatRoomInvitationSender.getTokensFromFireStore(desc, domain, chatRoomId);
 
                 })
                 .addOnFailureListener(e -> {

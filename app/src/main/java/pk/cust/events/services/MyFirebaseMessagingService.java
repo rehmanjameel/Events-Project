@@ -27,11 +27,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Check if the message contains data payload
-        if (remoteMessage.getData().size() > 0) {
-            String chatRoomId = remoteMessage.getData().get("chatRoomId");
-            // Handle the chat room ID here and navigate user to the chat room
-        }
+
 
         // Check if message contains data payload.
         if (!remoteMessage.getData().isEmpty()) {
@@ -41,8 +37,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.e("notifications1", title + ",.,." + message);
 
             // Process the message (e.g., show notification).
-            NotificationHelper.showNotification(App.context, title, message);
-            saveUserNotifications(title, message);
+            if (title != null && message != null) {
+                NotificationHelper.showNotification(App.context, title, message);
+                Log.e("notifications 0", title + ",.,." + message);
+
+//                saveUserNotifications(title, message);
+            }
 
         }
 
@@ -55,9 +55,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.e("notifications2", title + ",.,." + body);
 
             // Process the notification (e.g., show notification).
-            NotificationHelper.showNotification(App.context, title, body);
+            if (title != null && body != null) {
+                NotificationHelper.showNotification(App.context, title, body);
+                Log.e("notifications3", title + ",.,." + body);
 
-            saveUserNotifications(title, body);
+                saveUserNotifications(title, body);
+                String chatRoomId;
+                // Check if the message contains data payload
+                if (remoteMessage.getData().size() > 0) {
+                    chatRoomId = remoteMessage.getData().get("chatRoomId");
+                    Log.e("chatroom id", chatRoomId);
+
+                    // Handle the chat room ID here and navigate user to the chat room
+                    if (chatRoomId != null) {
+                        saveUserPostInvitation(title, body, chatRoomId);
+                    }
+                }
+            }
         }
     }
 
@@ -71,6 +85,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String currentStudentDocumentId = App.getString("document_id"); // Implement this method to get the document ID of the current student
         if (currentStudentDocumentId != null) {
             db.collection("users").document(currentStudentDocumentId).collection("notifications")
+                    .add(userNotification)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.e("TAG", "Notification added with ID: " + documentReference.getId());
+                            Toast.makeText(App.getContext(), "Notification added successfully!", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("TAG", "Failed to add notification", e);
+                            Toast.makeText(App.getContext(), "Failed to add notification", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Log.e("TAG", "Current student document ID is null");
+        }
+    }
+
+    private void saveUserPostInvitation(String title, String body, String chatRoomId) {
+        HashMap<String, Object> userNotification = new HashMap<>();
+        userNotification.put("title", title);
+        userNotification.put("body", body);
+        userNotification.put("chat_room_Id", chatRoomId);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Replace "currentStudentDocumentId" with the actual document ID of the current student
+        String currentStudentDocumentId = App.getString("document_id"); // Implement this method to get the document ID of the current student
+        if (currentStudentDocumentId != null) {
+            db.collection("users").document(currentStudentDocumentId).collection("chatinvitation")
                     .add(userNotification)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
