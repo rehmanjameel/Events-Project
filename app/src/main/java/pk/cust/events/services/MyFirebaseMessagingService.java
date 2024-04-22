@@ -61,14 +61,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 saveUserNotifications(title, body);
                 String chatRoomId;
+                String postId;
                 // Check if the message contains data payload
                 if (remoteMessage.getData().size() > 0) {
                     chatRoomId = remoteMessage.getData().get("chatRoomId");
+                    postId = remoteMessage.getData().get("chatPostId");
                     Log.e("chatroom id", chatRoomId);
 
                     // Handle the chat room ID here and navigate user to the chat room
                     if (chatRoomId != null) {
-                        saveUserPostInvitation(title, body, chatRoomId);
+                        saveUserPostInvitation(title, body, chatRoomId, postId);
                     }
                 }
             }
@@ -105,11 +107,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void saveUserPostInvitation(String title, String body, String chatRoomId) {
+    private void saveUserPostInvitation(String title, String body, String chatRoomId, String postId) {
         HashMap<String, Object> userNotification = new HashMap<>();
         userNotification.put("title", title);
         userNotification.put("body", body);
         userNotification.put("chat_room_Id", chatRoomId);
+        userNotification.put("post_id", postId);
+        userNotification.put("is_status", false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Replace "currentStudentDocumentId" with the actual document ID of the current student
@@ -121,7 +125,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.e("TAG", "Notification added with ID: " + documentReference.getId());
-                            Toast.makeText(App.getContext(), "Notification added successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getContext(), "Invitation received!", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

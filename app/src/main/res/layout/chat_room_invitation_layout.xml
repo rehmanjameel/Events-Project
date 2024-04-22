@@ -43,7 +43,7 @@
                     android:id="@+id/rejectButton"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:text="Reject"
+                    android:text="Reject Ticket"
                     android:textSize="14sp"
                     android:drawableTint="@color/white"
                     android:layout_marginStart="10dp"
@@ -56,12 +56,12 @@
                     android:id="@+id/acceptButton"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:text="Accept"
+                    android:text="Accept Ticekt"
                     android:textSize="14sp"
                     android:drawableTint="@color/white"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:backgroundTint="@color/transparent_light_orange"
+                    android:backgroundTint="@color/purple_500"
                     app:cornerRadius="10dp"
                     />
 

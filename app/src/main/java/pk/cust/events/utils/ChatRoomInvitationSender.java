@@ -22,7 +22,7 @@ import okhttp3.Response;
 public class ChatRoomInvitationSender {
     private static List<String> tokens = new ArrayList<>();
 
-    public static void getTokensFromFireStore(String title, String body, String chatRoomId) {
+    public static void getTokensFromFireStore(String title, String body, String chatRoomId, String postId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users")
@@ -42,7 +42,7 @@ public class ChatRoomInvitationSender {
                             Log.d("TAG", "No token found for user: " + userId);
                         }
                     }
-                    sendNotification(title, body, chatRoomId, tokens);
+                    sendNotification(title, body, chatRoomId, postId, tokens);
 
                 })
                 .addOnFailureListener(e -> {
@@ -50,7 +50,7 @@ public class ChatRoomInvitationSender {
                 });
     }
 
-    public static void sendNotification(String title, String body, String chatRoomId, List<String> deviceTokens) {
+    public static void sendNotification(String title, String body, String chatRoomId, String postId, List<String> deviceTokens) {
 
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
@@ -65,6 +65,7 @@ public class ChatRoomInvitationSender {
 
                 JSONObject dataJson = new JSONObject();
                 dataJson.put("chatRoomId", chatRoomId);
+                dataJson.put("chatPostId", postId);
 
                 JSONObject messageJson = new JSONObject();
                 messageJson.put("to", token);

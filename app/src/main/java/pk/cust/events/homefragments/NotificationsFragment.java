@@ -78,7 +78,12 @@ public class NotificationsFragment extends Fragment {
                                 Log.e("notifications get data", title + " .,." + description);
                                 Log.e("notifications get data", title + " .,." + snapshot.getId());
 
-                                notificationsModelList.add(new NotificationsModel(snapshot.getId(), title, description));
+                                NotificationsModel notificationsModel = new NotificationsModel();
+
+                                notificationsModel.setId(snapshot.getId());
+                                notificationsModel.setName(title);
+                                notificationsModel.setDescription(description);
+                                notificationsModelList.add(notificationsModel);
                             }
 
                         }

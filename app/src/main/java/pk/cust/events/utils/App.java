@@ -25,6 +25,7 @@ public class App extends Application {
     private static final String KEY_LOGGED_IN = "logged_in";
     public static boolean IS_PROFILE = false;
     public static boolean IS_CHAT_FROM_HOME = false;
+    public static boolean IS_ACCEPTED_ROOM = false;
     public static final String USER_NAME = "USER_NAME";
     public static final String PHONE_NUMBER = "PHONE_NUMBER";
     public static final String ADDRESS = "ADDRESS";
