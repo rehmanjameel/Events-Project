@@ -38,7 +38,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             // Process the message (e.g., show notification).
             if (title != null && message != null) {
-                NotificationHelper.showNotification(App.context, title, message);
+//                NotificationHelper.showNotification(App.context, title, message);
                 Log.e("notifications 0", title + ",.,." + message);
 
 //                saveUserNotifications(title, message);

@@ -97,6 +97,10 @@ public class EventDetailFragment extends Fragment {
             // You might use a chat SDK or implement your own chat functionality here
             // For demonstration purposes, we'll simply log the chatRoomId
             Log.d("ChatRoomFragment", "Joining chat room: " + getChatRoomId);
+            // Chat room created successfully
+            binding.chatTitle.setVisibility(View.VISIBLE);
+            binding.postChatRV.setVisibility(View.VISIBLE);
+            binding.textLinearLayoutId.setVisibility(View.VISIBLE);
             fetchChatMessages(getChatRoomId);
         }
 
