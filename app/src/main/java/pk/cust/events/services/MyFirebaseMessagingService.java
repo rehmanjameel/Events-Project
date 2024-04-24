@@ -1,5 +1,6 @@
 package pk.cust.events.services;
 
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import pk.cust.events.activities.MainActivity;
 import pk.cust.events.utils.App;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -55,6 +57,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 String title = remoteMessage.getNotification().getTitle();
                 String body = remoteMessage.getNotification().getBody();
 
+                if (title.equals("Chat Closed")) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
                 Log.e("notifications2", title + ",.,." + body);
 
                 // Process the notification (e.g., show notification).

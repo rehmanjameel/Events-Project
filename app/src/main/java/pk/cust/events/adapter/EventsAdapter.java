@@ -122,11 +122,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         if (TextUtils.isEmpty(query)) {
             filteredList.addAll(eventsList);
         } else {
-            String lowerCaseQuery = query.toLowerCase();
             for (EventsModel model : eventsList) {
-                if (model.getEventTitle().toLowerCase().contains(lowerCaseQuery) ||
-                        model.getEventDomain().toLowerCase().contains(lowerCaseQuery) ||
-                        model.getPersonName().toLowerCase().contains(lowerCaseQuery)) {
+                if (model.getEventDomain().equalsIgnoreCase(query)) {
                     filteredList.add(model);
                 }
             }

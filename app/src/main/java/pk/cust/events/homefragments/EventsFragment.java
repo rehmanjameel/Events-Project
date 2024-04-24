@@ -15,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.Task;
@@ -41,6 +43,7 @@ public class EventsFragment extends Fragment {
    FragmentEventsBinding binding;
    EventsAdapter eventsAdapter;
    ArrayList<EventsModel> eventsModelArrayList = new ArrayList<>();
+    List<String> domainsItems = new ArrayList<>();
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -63,6 +66,7 @@ public class EventsFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), 2);
         binding.eventsRV.setLayoutManager(layoutManager);
 
+
         binding.searchEditTextId.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -84,8 +88,34 @@ public class EventsFragment extends Fragment {
         binding.progressbar.setVisibility(View.VISIBLE);
         getDataFromFireStore();
 
+        setUpDomains();
         return binding.getRoot();
     }
+
+    private void setUpDomains() {
+        // add domains in array list to show dropdown
+        domainsItems.add("Science and Technology");
+        domainsItems.add("Medicine and Healthcare");
+        domainsItems.add("Business and Entrepreneurship");
+        domainsItems.add("Education");
+        domainsItems.add("Arts and Entertainment");
+        domainsItems.add("Social Sciences");
+        domainsItems.add("Communication and Media");
+        domainsItems.add("Environmental and Sustainability");
+        domainsItems.add("Sports and Recreation");
+        domainsItems.add("Law and Justice");
+
+        ArrayAdapter<String> domainAdapter = new ArrayAdapter<>(requireActivity(),
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, domainsItems);
+        binding.domainsDropDown.setAdapter(domainAdapter);
+
+        binding.domainsDropDown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedWord = domainsItems.get(position);
+                eventsAdapter.filter(selectedWord);
+            }
+        });    }
 
     public void hideSoftKeyboard()
     {

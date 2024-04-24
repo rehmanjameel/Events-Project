@@ -69,12 +69,14 @@ public class EventDetailFragment extends Fragment {
                 if (App.IS_ACCEPTED_ROOM) {
                     Log.e("check wtf", bundle.getString("user_id"));
                     Log.e("profile logs1005", String.valueOf(App.IS_ACCEPTED_ROOM));
-                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), bundle.getString("user_id"));
+                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), bundle.getString("post_id"),
+                            bundle.getString("user_id"));
                 } else {
                     Log.e("check wtf01", bundle.getString("user_id"));
                     Log.e("profile logs10005", String.valueOf(App.IS_ACCEPTED_ROOM));
 
-                    checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("user_id"));
+                    checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
+                            bundle.getString("user_id"));
                 }
             }
             updateData(bundle);
@@ -148,12 +150,12 @@ public class EventDetailFragment extends Fragment {
             Log.e("profile logs14", String.valueOf(App.IS_PROFILE));
             if (!App.IS_ROOM_SPACE) {
                 binding.chatTitle.setVisibility(View.GONE);
-                fetchChatMessages("chat_"+bundle.getString("post_id"));
+                fetchChatMessages("chat_" + bundle.getString("post_id"));
             }
         }
         binding.closeChat.setOnClickListener(v -> {
             Log.e("button close chat", "isclicked??");
-            updateCurrentUserInChatRoom("chat_"+bundle.getString("post_id"),
+            updateCurrentUserInChatRoom("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
                     bundle.getString("user_id"));
         });
 
@@ -190,7 +192,7 @@ public class EventDetailFragment extends Fragment {
                             sendMessageToFirestore(message, chatRoomId); // Pass the chat room ID
                         } else {
 
-                            sendMessageToFirestore(message, "chat_"+bundle.getString("post_id")); // Pass the chat room ID
+                            sendMessageToFirestore(message, "chat_" + bundle.getString("post_id")); // Pass the chat room ID
                         }
 
                     }
@@ -275,7 +277,9 @@ public class EventDetailFragment extends Fragment {
 
         // Add current user and other participants to the chat room
         Map<String, Object> participants = new HashMap<>();
-        participants.put(currentUserId, true);
+        participants.put(postId, true);
+        participants.put("creator_id", currentUserId);
+        participants.put("creator_name", userName);
 //        participants.put(otherUserId, true);
 
         // Create the chat room document in Firestore
@@ -307,7 +311,6 @@ public class EventDetailFragment extends Fragment {
                         fetchChatMessages(chatRoomId);
 
 
-
                         Log.d("SendMessage", "Message sent successfully");
                     }
                 })
@@ -337,7 +340,6 @@ public class EventDetailFragment extends Fragment {
                         MessageModel message = document.toObject(MessageModel.class);
                         Log.e("message model class", message.getMessageText().toString());
                         messageList.add(message);
-
 
 
                         chatMessages.add(message);
@@ -372,16 +374,16 @@ public class EventDetailFragment extends Fragment {
     }
 
     // end the chat...
-    private void updateCurrentUserInChatRoom(String chatRoomId, String currentUserId) {
+    private void updateCurrentUserInChatRoom(String chatRoomId, String postId, String currentUserId) {
         // Reference to the chat room document in Firestore
         DocumentReference chatRoomRef = db.collection("Chats").document(chatRoomId);
 
         // Update the value of currentUserId to false
-        chatRoomRef.update(currentUserId, false)
+        chatRoomRef.update(postId, false)
                 .addOnSuccessListener(aVoid -> {
                     // Current user updated successfully
                     binding.textLinearLayoutId.setVisibility(View.GONE);
-                    checkIfCurrentUserIsCreator(chatRoomId, currentUserId);
+                    checkIfCurrentUserIsCreator(chatRoomId, postId, currentUserId);
                     ChatRoomInvitationSender.getTokensFromFireStore("Chat Closed", currentUserId, chatRoomId, bundle.getString("post_domain"));
                 })
                 .addOnFailureListener(e -> {
@@ -389,7 +391,7 @@ public class EventDetailFragment extends Fragment {
                 });
     }
 
-    private void checkIfCurrentUserIsCreator(String chatRoomId, String currentUserId) {
+    private void checkIfCurrentUserIsCreator(String chatRoomId, String postId, String creatorId) {
         // Reference to the chat room document in Firestore
         Log.e("check wtf01", "bundle.getString(\"user_id\")  " + chatRoomId);
         DocumentReference chatRoomRef = db.collection("Chats").document(chatRoomId);
@@ -398,20 +400,25 @@ public class EventDetailFragment extends Fragment {
         chatRoomRef.get().addOnSuccessListener(documentSnapshot -> {
 
             if (documentSnapshot.exists()) {
-                Boolean isCreator = documentSnapshot.getBoolean(currentUserId);
+                Boolean isCreator = documentSnapshot.getBoolean(postId);
+                String creatorid = documentSnapshot.getString("creator_id");
+                String creator_name = documentSnapshot.getString("creator_name");
 
-                Log.e("is accepted11", currentUserId +",.," + isCreator);
-                if (App.IS_ACCEPTED_ROOM && Boolean.FALSE.equals(isCreator)) {
-                    if (!currentUserId.equals(App.getString("document_id"))) {
+                Log.e("creator", creatorid + ",.,." + creator_name + ",.,." + creatorId);
+                if (!creatorId.equals(App.getString("document_id"))) {
+                    binding.closeChat.setVisibility(View.GONE);
+                    Log.e("is accepted11", creatorId + ",.," + isCreator);
+                    if (App.IS_ACCEPTED_ROOM && Boolean.FALSE.equals(isCreator)) {
 
                         binding.textLinearLayoutId.setVisibility(View.GONE);
+
                     }
-                    Log.e("is accepted12", currentUserId);
+                    Log.e("is accepted12", creatorId);
 
                 }
                 // Check if the current user's ID exists as a key in the document
-                if (documentSnapshot.contains(currentUserId)) {
-                    Log.e("check wtf010", currentUserId);
+                if (documentSnapshot.contains(creatorId)) {
+                    Log.e("check wtf010", creatorId);
                     // Retrieve the boolean value associated with the current user's ID
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
@@ -445,7 +452,6 @@ public class EventDetailFragment extends Fragment {
             // Error retrieving chat room data
         });
     }
-
 
 
 }
