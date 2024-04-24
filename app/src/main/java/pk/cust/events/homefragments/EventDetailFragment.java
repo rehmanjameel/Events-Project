@@ -69,7 +69,7 @@ public class EventDetailFragment extends Fragment {
                 if (App.IS_ACCEPTED_ROOM) {
                     Log.e("check wtf", bundle.getString("user_id"));
                     Log.e("profile logs1005", String.valueOf(App.IS_ACCEPTED_ROOM));
-                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), App.getString("document_id"));
+                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), bundle.getString("user_id"));
                 } else {
                     Log.e("check wtf01", bundle.getString("user_id"));
                     Log.e("profile logs10005", String.valueOf(App.IS_ACCEPTED_ROOM));
@@ -100,7 +100,7 @@ public class EventDetailFragment extends Fragment {
                 Navigation.findNavController(view).popBackStack(R.id.action_eventDetailFragment_to_homeFragment, false);
                 Navigation.findNavController(view).popBackStack();
             });
-        } else {
+        } else if (App.IS_PROFILE) {
             binding.backArrow.setOnClickListener(view -> {
                 App.IS_PROFILE = false;
                 Intent intent = new Intent(requireActivity(), ProfileActivity.class);
@@ -110,11 +110,18 @@ public class EventDetailFragment extends Fragment {
 
         }
 
+
         if (App.IS_ACCEPTED_ROOM) {
             // Retrieve chat room ID from arguments
             if (getArguments() != null) {
                 getChatRoomId = getArguments().getString("chatRoomId");
             }
+            binding.backArrow.setOnClickListener(view -> {
+                App.IS_ACCEPTED_ROOM = false;
+
+                Navigation.findNavController(view).popBackStack(R.id.action_eventDetailFragment_to_chatRoomFragment, false);
+                Navigation.findNavController(view).popBackStack();
+            });
         }
 
         // Handle joining the chat room with the provided chatRoomId
@@ -389,12 +396,23 @@ public class EventDetailFragment extends Fragment {
 
         // Retrieve the document data
         chatRoomRef.get().addOnSuccessListener(documentSnapshot -> {
+
             if (documentSnapshot.exists()) {
+                Boolean isCreator = documentSnapshot.getBoolean(currentUserId);
+
+                Log.e("is accepted11", currentUserId +",.," + isCreator);
+                if (App.IS_ACCEPTED_ROOM && Boolean.FALSE.equals(isCreator)) {
+                    if (!currentUserId.equals(App.getString("document_id"))) {
+
+                        binding.textLinearLayoutId.setVisibility(View.GONE);
+                    }
+                    Log.e("is accepted12", currentUserId);
+
+                }
                 // Check if the current user's ID exists as a key in the document
                 if (documentSnapshot.contains(currentUserId)) {
                     Log.e("check wtf010", currentUserId);
                     // Retrieve the boolean value associated with the current user's ID
-                    Boolean isCreator = documentSnapshot.getBoolean(currentUserId);
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
                     if (isCreator != null && isCreator) {
