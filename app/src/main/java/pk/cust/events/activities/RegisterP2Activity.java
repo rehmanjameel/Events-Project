@@ -47,7 +47,7 @@ public class RegisterP2Activity extends AppCompatActivity {
 
     List<String> domainsItems = new ArrayList<>();
     List<String> interestsTopicsList = new ArrayList<>();
-    String userName, gender, phoneNo, address, userImage;
+    String userName, gender, phoneNo, email, userImage;
     boolean[] selectedLanguage;
     ArrayList<Integer> langList = new ArrayList<>();
     private FirebaseAuth mAuth;
@@ -84,7 +84,7 @@ public class RegisterP2Activity extends AppCompatActivity {
             userName = getIntent().getStringExtra("user_name");
             gender = getIntent().getStringExtra("gender");
             phoneNo = getIntent().getStringExtra("phone_no");
-            address = getIntent().getStringExtra("address");
+            email = getIntent().getStringExtra("email");
             userImage = getIntent().getStringExtra("user_image");
         }
 
@@ -242,7 +242,7 @@ public class RegisterP2Activity extends AppCompatActivity {
 
         String domainsDropDown = Objects.requireNonNull(binding.domainsDropDown.getText()).toString();
         String interestDropDown = Objects.requireNonNull(binding.interestDropDown.getText()).toString();
-        String email = Objects.requireNonNull(binding.emailTIET.getText()).toString();
+        String address = Objects.requireNonNull(binding.currentAddressTIET.getText()).toString();
         String dob = Objects.requireNonNull(binding.dobTIET.getText()).toString();
         String password = Objects.requireNonNull(binding.passwordTIET.getText()).toString();
 
@@ -253,7 +253,7 @@ public class RegisterP2Activity extends AppCompatActivity {
             binding.domainsDropDown.setError("Select Domain");
             binding.interestDropDown.setError("Select Interest");
             binding.dobTIET.setError("Field required");
-            binding.emailTIET.setError("Field required");
+            binding.currentAddressTIET.setError("Field required");
             binding.passwordTIET.setError("Field required");
 
         } else if (interestDropDown.isEmpty() || interestDropDown.equals("Select")) {
@@ -265,8 +265,8 @@ public class RegisterP2Activity extends AppCompatActivity {
         } else if (dob.isEmpty()) {
             binding.dobTIET.setError("Field required");
 
-        } else if (email.isEmpty() || !Validator.isValidMail(email)) {
-            binding.emailTIET.setError("Field required or Invalid email");
+        } else if (address.isEmpty()) {
+            binding.currentAddressTIET.setError("Field required");
 
         } else if (password.isEmpty() || !Validator.isValidPasswordFormat(password)) {
             binding.passwordTIET.setError("Field required or password is weak");
@@ -278,7 +278,7 @@ public class RegisterP2Activity extends AppCompatActivity {
         }
     }
 
-    private void saveEmailPassword(String email, String password, String interestDropDown, String domainsDropDown, String dob) {
+    private void saveEmailPassword(String address, String password, String interestDropDown, String domainsDropDown, String dob) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -288,7 +288,7 @@ public class RegisterP2Activity extends AppCompatActivity {
                             Log.d("TAG", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                uploadImage(email, interestDropDown, domainsDropDown, dob);
+                                uploadImage(address, interestDropDown, domainsDropDown, dob);
                             }
 
                         } else {
@@ -304,7 +304,7 @@ public class RegisterP2Activity extends AppCompatActivity {
                 });
     }
 
-    private void uploadImage(String email, String interestDropDown, String domainsDropDown, String dob) {
+    private void uploadImage(String address, String interestDropDown, String domainsDropDown, String dob) {
         // Defining the child of storageReference
         if (userImage != null) {
             StorageReference ref
@@ -321,7 +321,7 @@ public class RegisterP2Activity extends AppCompatActivity {
                             ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    registerUser(interestDropDown, domainsDropDown, dob, email, uri.toString());
+                                    registerUser(interestDropDown, domainsDropDown, dob, address, uri.toString());
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -373,7 +373,7 @@ public class RegisterP2Activity extends AppCompatActivity {
         }
     }
 
-    private void registerUser(String interestDropDown, String domainsDropDown, String dob, String email, String imageUri) {
+    private void registerUser(String interestDropDown, String domainsDropDown, String dob, String address, String imageUri) {
 
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();

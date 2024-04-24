@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,12 +82,18 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.eventTitle.setText(model.getEventTitle());
         holder.eventDomain.setText(model.getEventDomain());
         holder.personName.setText(model.getPersonName());
+        Log.e("profile logs", String.valueOf(App.IS_PROFILE));
 
         if (App.IS_PROFILE) {
             holder.personImage.setVisibility(View.GONE);
         }
 
         holder.eventCard.setOnClickListener(view -> {
+            App.saveBoolean("is_room_space", true);
+            Log.e("profile logs", String.valueOf(App.IS_PROFILE));
+            App.IS_ROOM_SPACE = true;
+            Log.e("roomspace logs", String.valueOf(App.IS_ROOM_SPACE));
+
             Bundle bundle = new Bundle();
             bundle.putString("user_name", model.getPersonName());
             bundle.putString("user_image", model.getPersonImage());

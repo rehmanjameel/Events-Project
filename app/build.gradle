@@ -63,4 +63,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // email sender
+    implementation 'com.github.1902shubh:SendMail:1.0.0'
+
 }

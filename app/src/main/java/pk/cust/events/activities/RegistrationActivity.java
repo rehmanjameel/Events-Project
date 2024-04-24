@@ -15,7 +15,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ import com.bumptech.glide.Glide;
 
 import pk.cust.events.R;
 import pk.cust.events.databinding.ActivityRegistrationBinding;
+import pk.cust.events.services.EmailSenderService;
+import pk.cust.events.utils.App;
 import pk.cust.events.utils.RealPathUtil;
 import pk.cust.events.utils.Validator;
 
@@ -74,6 +78,64 @@ public class RegistrationActivity extends AppCompatActivity {
         binding.selectImage.setOnClickListener(view -> {
             pickImage();
         });
+
+        binding.sendCodeButton.setOnClickListener(v -> {
+            sendEmailOtp();
+        });
+
+        binding.verifyCodeButton.setOnClickListener(v -> {
+            if (App.getString("email_otp").equals(binding.emailCodeTIET.getText().toString())) {
+                binding.otpLayout.setVisibility(View.GONE);
+                binding.nextButton.setVisibility(View.VISIBLE);
+                Toast.makeText(this, "Email verified!", Toast.LENGTH_SHORT).show();
+            } else if (binding.emailCodeTIET.getText().toString().isEmpty()) {
+                binding.emailCodeTIET.setError("Field required...");
+            } else {
+                binding.emailCodeTIET.setError("Otp not matched!");
+            }
+        });
+    }
+
+    private void sendEmailOtp() {
+        String email = Objects.requireNonNull(binding.emailTIET.getText()).toString();
+        if (email.isEmpty()) {
+            binding.emailTIET.setError("Field required");
+        }
+        else if (!Validator.isValidMail(email)) {
+            binding.emailTIET.setError("Field required or Invalid email");
+
+        } else {
+            new EmailSenderService(this, email).sendEmail();
+            startTimer();
+        }
+    }
+
+    private void startTimer() {
+        binding.sendCodeButton.setVisibility(View.GONE);
+        binding.countTimerText.setVisibility(View.VISIBLE);
+        binding.verifyCodeButton.setVisibility(View.VISIBLE);
+        binding.emailCodeTIL.setVisibility(View.VISIBLE);
+        CountDownTimer countDownTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // Update TextView with remaining time
+                binding.countTimerText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            @Override
+            public void onFinish() {
+                // Timer finished, show the button again
+                binding.sendCodeButton.setVisibility(View.VISIBLE);
+                binding.verifyCodeButton.setVisibility(View.GONE);
+                binding.emailCodeTIL.setVisibility(View.GONE);
+                binding.sendCodeButton.setText("Resend");
+                // Optionally, reset the TextView to initial state
+                App.saveString("email_otp", "");
+                binding.countTimerText.setText("60");
+            }
+        };
+
+        countDownTimer.start();
     }
 
     private void checkValidation() {
@@ -81,15 +143,15 @@ public class RegistrationActivity extends AppCompatActivity {
         String name = Objects.requireNonNull(binding.userNameTIET.getText()).toString();
         String gender = Objects.requireNonNull(binding.genderDropDown.getText()).toString();
         String phoneNo = Objects.requireNonNull(binding.phoneNoTIET.getText()).toString();
-        String address = Objects.requireNonNull(binding.currentAddressTIET.getText()).toString();
+        String email = Objects.requireNonNull(binding.emailTIET.getText()).toString();
 
 
         if (name.isEmpty()
-                && gender.equals("Select") && phoneNo.isEmpty() && address.isEmpty()) {
+                && gender.equals("Select") && phoneNo.isEmpty() && email.isEmpty()) {
             binding.userNameTIET.setError("Field required");
             binding.phoneNoTIET.setError("Field required");
             binding.genderDropDown.setError("Field required");
-            binding.currentAddressTIET.setError("Field required");
+            binding.emailTIET.setError("Field required");
 
         } else if (name.isEmpty()) {
             binding.userNameTIET.setError("Field required");
@@ -100,8 +162,8 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if (phoneNo.isEmpty() || !Validator.isValidPakistanMobileNumber(phoneNo)) {
             binding.phoneNoTIET.setError("Field required or Invalid Phone no.");
 
-        } else if (address.isEmpty()) {
-            binding.currentAddressTIET.setError("Field required");
+        } else if (email.isEmpty()) {
+            binding.emailTIET.setError("Field required");
 
         } else if (imageUri == null) {
             Toast.makeText(this, "Please select the image", Toast.LENGTH_LONG).show();
@@ -111,7 +173,7 @@ public class RegistrationActivity extends AppCompatActivity {
             intent.putExtra("user_name", name);
             intent.putExtra("gender", gender);
             intent.putExtra("phone_no", phoneNo);
-            intent.putExtra("address", address);
+            intent.putExtra("email", email);
             intent.putExtra("user_image", imageUri.toString());
             startActivity(intent);
 

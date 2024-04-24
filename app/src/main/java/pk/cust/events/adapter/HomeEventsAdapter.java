@@ -148,6 +148,8 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                                 holder.likeButton.setImageResource(R.drawable.baseline_favorite_24);
                                 holder.likeButton.setColorFilter(ContextCompat.getColor(activity, R.color.red), PorterDuff.Mode.SRC_IN);
                                 holder.getLikeButtonStatus(model.getPostId(), user_id);
+                                ChatRoomInvitationSender.getTokenForSingleUser(App.getString("user_name"),
+                                        " liked your post ", model.getPostId());
                             }
                         } else {
                             // Document doesn't exist, meaning no likes for this post yet

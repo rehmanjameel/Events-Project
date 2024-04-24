@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import pk.cust.events.R;
@@ -49,6 +50,7 @@ public class EventDetailFragment extends Fragment {
     private String getChatRoomId = null;
     String chatRoomId;
     MessageAdapter messageAdapter;
+    Bundle bundle;
     private List<MessageModel> messageList = new ArrayList<>(); // Declare and initialize messageList
 
 
@@ -61,24 +63,49 @@ public class EventDetailFragment extends Fragment {
 
         binding.postChatRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-        Bundle bundle = getArguments();
-        updateData(bundle);
+        bundle = getArguments();
+        if (bundle != null) {
+            if (!App.IS_ROOM_SPACE) {
+                if (App.IS_ACCEPTED_ROOM) {
+                    Log.e("check wtf", bundle.getString("user_id"));
+                    Log.e("profile logs1005", String.valueOf(App.IS_ACCEPTED_ROOM));
+                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), App.getString("document_id"));
+                } else {
+                    Log.e("check wtf01", bundle.getString("user_id"));
+                    Log.e("profile logs10005", String.valueOf(App.IS_ACCEPTED_ROOM));
 
-        if (!App.IS_PROFILE) {
+                    checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("user_id"));
+                }
+            }
+            updateData(bundle);
+
+        }
+        Log.e("profile logs12", String.valueOf(App.IS_PROFILE));
+
+        if (App.IS_ROOM_SPACE) {
+            Log.e("profile logs13", String.valueOf(App.IS_PROFILE));
+
+
             binding.backArrow.setOnClickListener(view -> {
+                App.IS_ROOM_SPACE = false;
                 Navigation.findNavController(view).popBackStack(R.id.action_eventDetailFragment_to_eventsFragment, false);
                 Navigation.findNavController(view).popBackStack();
             });
+
         } else if (App.IS_CHAT_FROM_HOME) {
+
             binding.backArrow.setOnClickListener(view -> {
+                App.IS_CHAT_FROM_HOME = false;
+
                 Navigation.findNavController(view).popBackStack(R.id.action_eventDetailFragment_to_homeFragment, false);
                 Navigation.findNavController(view).popBackStack();
             });
         } else {
             binding.backArrow.setOnClickListener(view -> {
+                App.IS_PROFILE = false;
                 Intent intent = new Intent(requireActivity(), ProfileActivity.class);
                 startActivity(intent);
-                requireActivity().finish();
+//                requireActivity().finish();
             });
 
         }
@@ -98,15 +125,30 @@ public class EventDetailFragment extends Fragment {
             // For demonstration purposes, we'll simply log the chatRoomId
             Log.d("ChatRoomFragment", "Joining chat room: " + getChatRoomId);
             // Chat room created successfully
-            binding.chatTitle.setVisibility(View.VISIBLE);
-            binding.postChatRV.setVisibility(View.VISIBLE);
+//            binding.chatTitle.setVisibility(View.VISIBLE);
+//            binding.postChatRV.setVisibility(View.VISIBLE);
             binding.textLinearLayoutId.setVisibility(View.VISIBLE);
+            Log.e("profile logs1003", String.valueOf(App.IS_PROFILE));
+
             fetchChatMessages(getChatRoomId);
         }
 
         if (chatRoomId != null) {
+            Log.e("profile logs10003", String.valueOf(App.IS_PROFILE));
+
             fetchChatMessages(chatRoomId);
+        } else {
+            Log.e("profile logs14", String.valueOf(App.IS_PROFILE));
+            if (!App.IS_ROOM_SPACE) {
+                binding.chatTitle.setVisibility(View.GONE);
+                fetchChatMessages("chat_"+bundle.getString("post_id"));
+            }
         }
+        binding.closeChat.setOnClickListener(v -> {
+            Log.e("button close chat", "isclicked??");
+            updateCurrentUserInChatRoom("chat_"+bundle.getString("post_id"),
+                    bundle.getString("user_id"));
+        });
 
         // Set OnClickListener for the send button
         // Set OnClickListener for the send button
@@ -136,7 +178,13 @@ public class EventDetailFragment extends Fragment {
 
                         sendMessageToFirestore(message, getChatRoomId); // Pass the chat room ID
                     } else {
-                        sendMessageToFirestore(message, chatRoomId); // Pass the chat room ID
+                        if (chatRoomId != null) {
+
+                            sendMessageToFirestore(message, chatRoomId); // Pass the chat room ID
+                        } else {
+
+                            sendMessageToFirestore(message, "chat_"+bundle.getString("post_id")); // Pass the chat room ID
+                        }
 
                     }
 
@@ -174,13 +222,7 @@ public class EventDetailFragment extends Fragment {
             getLikeButtonStatus(dataBundle.getString("post_id"),
                     dataBundle.getString("user_id"));
 
-            if (App.IS_CHAT_FROM_HOME) {
-                createChatRoom(dataBundle.getString("post_id"), dataBundle.getString("user_id"),
-                        dataBundle.getString("user_name"), dataBundle.getString("post_domain"),
-                        dataBundle.getString("post_description"));
-            } else {
 
-            }
         }
     }
 
@@ -237,6 +279,8 @@ public class EventDetailFragment extends Fragment {
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
                     binding.textLinearLayoutId.setVisibility(View.VISIBLE);
+                    binding.closeChat.setVisibility(View.VISIBLE);
+
                     ChatRoomInvitationSender.getTokensFromFireStore(desc, domain, chatRoomId, postId);
 
                 })
@@ -319,5 +363,71 @@ public class EventDetailFragment extends Fragment {
 //            messageAdapter.notifyDataSetChanged();
 //        }
     }
+
+    // end the chat...
+    private void updateCurrentUserInChatRoom(String chatRoomId, String currentUserId) {
+        // Reference to the chat room document in Firestore
+        DocumentReference chatRoomRef = db.collection("Chats").document(chatRoomId);
+
+        // Update the value of currentUserId to false
+        chatRoomRef.update(currentUserId, false)
+                .addOnSuccessListener(aVoid -> {
+                    // Current user updated successfully
+                    binding.textLinearLayoutId.setVisibility(View.GONE);
+                    checkIfCurrentUserIsCreator(chatRoomId, currentUserId);
+                    ChatRoomInvitationSender.getTokensFromFireStore("Chat Closed", currentUserId, chatRoomId, bundle.getString("post_domain"));
+                })
+                .addOnFailureListener(e -> {
+                    // Error updating current user
+                });
+    }
+
+    private void checkIfCurrentUserIsCreator(String chatRoomId, String currentUserId) {
+        // Reference to the chat room document in Firestore
+        Log.e("check wtf01", "bundle.getString(\"user_id\")  " + chatRoomId);
+        DocumentReference chatRoomRef = db.collection("Chats").document(chatRoomId);
+
+        // Retrieve the document data
+        chatRoomRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Check if the current user's ID exists as a key in the document
+                if (documentSnapshot.contains(currentUserId)) {
+                    Log.e("check wtf010", currentUserId);
+                    // Retrieve the boolean value associated with the current user's ID
+                    Boolean isCreator = documentSnapshot.getBoolean(currentUserId);
+                    binding.chatTitle.setVisibility(View.VISIBLE);
+                    binding.postChatRV.setVisibility(View.VISIBLE);
+                    if (isCreator != null && isCreator) {
+                        // Current user is the creator of the chat room
+                        // Show the option to close the chat
+                        // For example:
+                        binding.textLinearLayoutId.setVisibility(View.VISIBLE);
+                        binding.closeChat.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.textLinearLayoutId.setVisibility(View.GONE);
+                        binding.closeChat.setVisibility(View.GONE);
+                    }
+                } else {
+                    binding.closeChat.setVisibility(View.GONE);
+                    binding.chatTitle.setVisibility(View.VISIBLE);
+                    binding.postChatRV.setVisibility(View.VISIBLE);
+//                    binding.textLinearLayoutId.setVisibility(View.GONE);
+                }
+            } else {
+                if (App.IS_CHAT_FROM_HOME) {
+
+                    createChatRoom(bundle.getString("post_id"), bundle.getString("user_id"),
+                            bundle.getString("user_name"), bundle.getString("post_domain"),
+                            bundle.getString("post_description"));
+                } else {
+
+                }
+            }
+        }).addOnFailureListener(e -> {
+            // Error retrieving chat room data
+        });
+    }
+
+
 
 }

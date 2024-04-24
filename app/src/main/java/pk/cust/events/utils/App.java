@@ -24,6 +24,7 @@ public class App extends Application {
     public static Context context;
     private static final String KEY_LOGGED_IN = "logged_in";
     public static boolean IS_PROFILE = false;
+    public static boolean IS_ROOM_SPACE = false;
     public static boolean IS_CHAT_FROM_HOME = false;
     public static boolean IS_ACCEPTED_ROOM = false;
     public static final String USER_NAME = "USER_NAME";
@@ -85,6 +86,15 @@ public class App extends Application {
     public static void saveLogin(boolean value) {
         SharedPreferences sharedPreferences = getPreferenceManager();
         sharedPreferences.edit().putBoolean(KEY_LOGGED_IN, value).apply();
+    }
+    public static void saveBoolean(String key, boolean value) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putBoolean(KEY_LOGGED_IN, value).apply();
+    }
+
+    public static boolean getBoolean(String key) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getBoolean(key, false);
     }
 
     public static boolean isLoggedIn() {

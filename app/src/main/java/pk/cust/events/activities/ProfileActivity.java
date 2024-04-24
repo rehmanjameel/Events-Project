@@ -112,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
                 });
 
             }
-        }, 5000);
+        }, 3000);
 
         getDataFromFireStore();
     }

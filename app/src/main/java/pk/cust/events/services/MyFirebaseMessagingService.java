@@ -15,19 +15,19 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import pk.cust.events.utils.App;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
+    private static final ArrayList<Long> alreadyNotifiedTimestamps = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
-
 
         // Check if message contains data payload.
         if (!remoteMessage.getData().isEmpty()) {
@@ -46,35 +46,53 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         }
 
-        // Check if message contains notification payload.
-        if (remoteMessage.getNotification() != null) {
-            // Handle notification payload of the message.
-            String title = remoteMessage.getNotification().getTitle();
-            String body = remoteMessage.getNotification().getBody();
+        if (!isDuplicate(remoteMessage.getSentTime())) {
+            // send notificaiton here
 
-            Log.e("notifications2", title + ",.,." + body);
+            // Check if message contains notification payload.
+            if (remoteMessage.getNotification() != null) {
+                // Handle notification payload of the message.
+                String title = remoteMessage.getNotification().getTitle();
+                String body = remoteMessage.getNotification().getBody();
 
-            // Process the notification (e.g., show notification).
-            if (title != null && body != null) {
-                NotificationHelper.showNotification(App.context, title, body);
-                Log.e("notifications3", title + ",.,." + body);
+                Log.e("notifications2", title + ",.,." + body);
 
-                saveUserNotifications(title, body);
-                String chatRoomId;
-                String postId;
-                // Check if the message contains data payload
-                if (remoteMessage.getData().size() > 0) {
-                    chatRoomId = remoteMessage.getData().get("chatRoomId");
-                    postId = remoteMessage.getData().get("chatPostId");
-                    Log.e("chatroom id", chatRoomId);
+                // Process the notification (e.g., show notification).
+                if (title != null && body != null) {
+                    NotificationHelper.showNotification(App.context, title, body);
+                    Log.e("notifications3", title + ",.,." + body);
 
-                    // Handle the chat room ID here and navigate user to the chat room
-                    if (chatRoomId != null) {
-                        saveUserPostInvitation(title, body, chatRoomId, postId);
+                    saveUserNotifications(title, body);
+                    String chatRoomId;
+                    String postId;
+                    // Check if the message contains data payload
+                    if (remoteMessage.getData().size() > 0) {
+                        chatRoomId = remoteMessage.getData().get("chatRoomId");
+                        postId = remoteMessage.getData().get("chatPostId");
+                        Log.e("chatroom id", chatRoomId);
+
+                        // Handle the chat room ID here and navigate user to the chat room
+                        if (!title.equals("Chat Closed")) {
+                            if (chatRoomId != null) {
+                                saveUserPostInvitation(title, body, chatRoomId, postId);
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    // Workaround for Firebase duplicate pushes
+    private boolean isDuplicate(long timestamp) {
+        if (alreadyNotifiedTimestamps.contains(timestamp)) {
+            alreadyNotifiedTimestamps.remove(timestamp);
+            return true;
+        } else {
+            alreadyNotifiedTimestamps.add(timestamp);
+        }
+
+        return false;
     }
 
     private void saveUserNotifications(String title, String body) {

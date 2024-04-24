@@ -6,12 +6,7 @@ public class NotificationsModel {
     String description;
     String chatId;
     String postId;
-
-//    public NotificationsModel(String id, String name, String description) {
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//    }
+    boolean rejectButtonHidden; // New field to track reject button visibility
 
     public String getId() {
         return id;
@@ -51,5 +46,13 @@ public class NotificationsModel {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public boolean isRejectButtonHidden() {
+        return rejectButtonHidden;
+    }
+
+    public void setRejectButtonHidden(boolean rejectButtonHidden) {
+        this.rejectButtonHidden = rejectButtonHidden;
     }
 }

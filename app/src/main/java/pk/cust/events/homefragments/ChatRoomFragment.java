@@ -214,7 +214,6 @@ public class ChatRoomFragment extends Fragment {
             @Override
             public void run() {
 
-
                 adapter.setOnItemClickListener(new ChatInvitationAdapter.OnItemClickListener() {
                     @Override
                     public void onAcceptClick(String chatRoomId, String invitationId, String postId) {
