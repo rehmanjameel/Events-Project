@@ -43,7 +43,7 @@
                     android:id="@+id/rejectButton"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:text="Reject Ticket"
+                    android:text="Remove Ticket"
                     android:textSize="14sp"
                     android:drawableTint="@color/white"
                     android:layout_marginStart="10dp"

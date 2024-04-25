@@ -65,7 +65,9 @@ public class EventDetailFragment extends Fragment {
 
         bundle = getArguments();
         if (bundle != null) {
-            if (!App.IS_ROOM_SPACE) {
+            updateData(bundle);
+
+//            if (!App.IS_ROOM_SPACE) {
                 if (App.IS_ACCEPTED_ROOM) {
                     Log.e("check wtf", bundle.getString("user_id"));
                     Log.e("profile logs1005", String.valueOf(App.IS_ACCEPTED_ROOM));
@@ -78,8 +80,7 @@ public class EventDetailFragment extends Fragment {
                     checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
                             bundle.getString("user_id"));
                 }
-            }
-            updateData(bundle);
+//            }
 
         }
         Log.e("profile logs12", String.valueOf(App.IS_PROFILE));
@@ -136,7 +137,7 @@ public class EventDetailFragment extends Fragment {
             // Chat room created successfully
 //            binding.chatTitle.setVisibility(View.VISIBLE);
 //            binding.postChatRV.setVisibility(View.VISIBLE);
-            binding.textLinearLayoutId.setVisibility(View.VISIBLE);
+//            binding.textLinearLayoutId.setVisibility(View.VISIBLE);
             Log.e("profile logs1003", String.valueOf(App.IS_PROFILE));
 
             fetchChatMessages(getChatRoomId);
@@ -412,12 +413,14 @@ public class EventDetailFragment extends Fragment {
 
                         binding.textLinearLayoutId.setVisibility(View.GONE);
 
+                    } else {
+                        binding.textLinearLayoutId.setVisibility(View.VISIBLE);
                     }
                     Log.e("is accepted12", creatorId);
 
                 }
                 // Check if the current user's ID exists as a key in the document
-                if (documentSnapshot.contains(creatorId)) {
+                if (documentSnapshot.contains(postId)) {
                     Log.e("check wtf010", creatorId);
                     // Retrieve the boolean value associated with the current user's ID
                     binding.chatTitle.setVisibility(View.VISIBLE);
@@ -426,13 +429,20 @@ public class EventDetailFragment extends Fragment {
                         // Current user is the creator of the chat room
                         // Show the option to close the chat
                         // For example:
+                        Log.e("creator001", creatorid + ",.,." + creator_name + ",.,." + creatorId);
+
                         binding.textLinearLayoutId.setVisibility(View.VISIBLE);
                         binding.closeChat.setVisibility(View.VISIBLE);
                     } else {
+                        Log.e("creator002", creatorid + ",.,." + creator_name + ",.,." + creatorId);
+
                         binding.textLinearLayoutId.setVisibility(View.GONE);
                         binding.closeChat.setVisibility(View.GONE);
+                        binding.chatTitle.setVisibility(View.GONE);
                     }
                 } else {
+                    Log.e("creator003", creatorid + ",.,." + creator_name + ",.,." + creatorId);
+
                     binding.closeChat.setVisibility(View.GONE);
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
