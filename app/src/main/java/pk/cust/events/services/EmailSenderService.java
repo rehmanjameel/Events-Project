@@ -3,6 +3,7 @@ package pk.cust.events.services;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,7 +35,8 @@ public class EmailSenderService {
 //    private final Bitmap bitmap;
     private final String sendTo;
     private final String username = "eventsapp526@gmail.com";
-    private final String appPassword = "xdyt ifkj ykrr uuud";
+    private final String appPassword = "dtuu qzyo dyqi aixk";
+//    private final String appPassword = "xdyt ifkj ykrr uuud";
     private final String to = "malikarj98@gmail.com";
 
     public EmailSenderService(Context context,
@@ -136,6 +138,7 @@ public class EmailSenderService {
                 App.saveString("email_otp", String.valueOf(randomNumber));
             } catch (MessagingException e) {
                 e.printStackTrace();
+                Log.e("error", e.getMessage());
                 // Show a toast on the UI thread
                 showToast("Failed to send email.");
             }

@@ -1,6 +1,9 @@
 package pk.cust.events.homefragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +11,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,10 +42,12 @@ import pk.cust.events.activities.ProfileActivity;
 import pk.cust.events.adapter.HomeEventsAdapter;
 import pk.cust.events.databinding.FragmentHomeBinding;
 import pk.cust.events.model.HomeEventsModel;
+import pk.cust.events.services.DeleteExpiredEventsWorker;
 import pk.cust.events.utils.App;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class HomeFragment extends Fragment {
@@ -52,12 +60,22 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
 
+    private final BroadcastReceiver postDeletedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String postId = intent.getStringExtra("postId");
+            if (postId != null) {
+                if (eventsAdapter != null)
+                    eventsAdapter.removeItem(postId);
+            }
+        }
+    };
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -115,6 +133,8 @@ public class HomeFragment extends Fragment {
                         String userId =  document.getString("userId");
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
+                        long startDateTime = document.getLong("start_date_time");
+                        long endDateTime = document.getLong("end_date_time");
 
                         Log.e("userid from posts", userId + ",.,." + description + ",.,." + imageUrl);
 
@@ -138,6 +158,8 @@ public class HomeFragment extends Fragment {
                                         homeEventsModel.setDescription(description);
                                         homeEventsModel.setImageUrl(imageUrl);
                                         homeEventsModel.setDomain(userDomain);
+                                        homeEventsModel.setStartDateTime(startDateTime);
+                                        homeEventsModel.setEndDateTime(endDateTime);
                                         eventsModelArrayList.add(homeEventsModel);
                                     }
                                     Log.e("user name from posts123", userName + ",.,." + userImage);
@@ -158,8 +180,12 @@ public class HomeFragment extends Fragment {
                                 binding.progressbar.setVisibility(View.GONE);
 
                                 Log.e("events list", String.valueOf(eventsModelArrayList.size()));
-                                eventsAdapter = new HomeEventsAdapter(requireActivity(), eventsModelArrayList);
-                                binding.eventsRV.setAdapter(eventsAdapter);
+                                if (!eventsModelArrayList.isEmpty()) {
+                                    eventsAdapter = new HomeEventsAdapter(requireActivity(), eventsModelArrayList);
+                                    binding.eventsRV.setAdapter(eventsAdapter);
+                                } else {
+                                    binding.noDataText.setVisibility(View.VISIBLE);
+                                }
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -173,5 +199,21 @@ public class HomeFragment extends Fragment {
         super.onResume();
         binding.progressbar.setVisibility(View.VISIBLE);
         getDataFromFireStore();
+
+        // Register the receiver
+        LocalBroadcastManager.getInstance(requireActivity()).registerReceiver(postDeletedReceiver, new IntentFilter("pk.cust.events.ACTION_POST_DELETED"));
+
+        // Schedule the worker to run periodically
+        PeriodicWorkRequest deleteExpiredPostsWorkRequest =
+                new PeriodicWorkRequest.Builder(DeleteExpiredEventsWorker.class, 10, TimeUnit.SECONDS)
+                        .build();
+
+        WorkManager.getInstance(requireActivity()).enqueue(deleteExpiredPostsWorkRequest);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(postDeletedReceiver);
     }
 }

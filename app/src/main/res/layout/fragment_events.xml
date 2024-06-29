@@ -116,8 +116,9 @@
         android:id="@+id/noDataText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Data found"
+        android:text="No Event found"
         android:visibility="gone"
+        android:textColor="@color/purple_700"
         android:layout_centerInParent="true"/>
 
     <ProgressBar

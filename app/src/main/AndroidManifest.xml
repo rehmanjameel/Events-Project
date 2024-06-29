@@ -24,6 +24,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.Editprofile"
             android:exported="false" />
         <activity
@@ -66,20 +69,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-<!--        <service android:name=".services.MyNotificationListenerService"-->
-<!--            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.service.notification.NotificationListenerService" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
-
-<!--        <service-->
-<!--            android:name=".services.NotificationService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false" />-->
     </application>
 
 </manifest>

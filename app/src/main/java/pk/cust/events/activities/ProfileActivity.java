@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Task;
@@ -89,32 +90,11 @@ public class ProfileActivity extends AppCompatActivity {
             logout();
         });
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                eventsAdapter.setOnItemClickListener(new EventsAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Bundle data) {
-                        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
-
-                        // Create a new instance of the fragment
-                        EventDetailFragment fragment = new EventDetailFragment();
-                        fragment.setArguments(data);
-
-                        // Replace the current fragment with the new one
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, fragment)
-                                .addToBackStack(null) // Optional: Add to back stack for navigation
-                                .commit();
-
-                        // Make the fragment_container visible
-                    }
-                });
-
-            }
-        }, 3000);
-
         getDataFromFireStore();
+
+
+
+
     }
 
     private void getDataFromFireStore() {
@@ -155,6 +135,36 @@ public class ProfileActivity extends AppCompatActivity {
                                     eventsAdapter = new EventsAdapter(this, eventsModelArrayList);
                                     binding.personalEventsRV.setAdapter(eventsAdapter);
                                     binding.progressbar.setVisibility(View.GONE);
+
+
+                                    try {
+                                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                eventsAdapter.setOnItemClickListener(new EventsAdapter.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(Bundle data) {
+                                                        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+
+                                                        // Create a new instance of the fragment
+                                                        EventDetailFragment fragment = new EventDetailFragment();
+                                                        fragment.setArguments(data);
+
+                                                        // Replace the current fragment with the new one
+                                                        getSupportFragmentManager().beginTransaction()
+                                                                .replace(R.id.fragment_container, fragment)
+                                                                .addToBackStack(null) // Optional: Add to back stack for navigation
+                                                                .commit();
+
+                                                        // Make the fragment_container visible
+                                                    }
+                                                });
+
+                                            }
+                                        }, 3000);
+                                    } catch (Exception e) {
+                                        Toast.makeText(this, " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
 
                                 }
 

@@ -12,6 +12,8 @@ public class HomeEventsModel {
     private String description;
     private String imageUrl;
     private String domain;
+    private long startDateTime;
+    private long endDateTime;
 
 
 //    public HomeEventsModel(String userId, String userName, String userImage, String description,
@@ -79,5 +81,21 @@ public class HomeEventsModel {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public long getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(long startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public long getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(long endDateTime) {
+        this.endDateTime = endDateTime;
     }
 }

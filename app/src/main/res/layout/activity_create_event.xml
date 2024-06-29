@@ -4,7 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/purple_700"
     tools:context="pk.cust.events.activities.CreateEventActivity">
+
+    <RelativeLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/purple_500">
+
+        <ImageView
+            android:id="@+id/backArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:padding="10dp"
+            android:visibility="visible"
+            app:tint="@color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Event"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="10dp"
+            />
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/postImage"
@@ -12,6 +43,7 @@
         android:layout_height="300dp"
         android:src="@drawable/baseline_image_24"
         android:scaleType="fitXY"
+        android:layout_below="@id/topLayout"
         android:layout_marginTop="10dp"
         android:adjustViewBounds="true"/>
 
@@ -21,9 +53,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="0dp"
         android:text="Select Image"
         android:layout_below="@+id/postImage"
         android:layout_alignParentEnd="true"
@@ -35,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/selectImage"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp">
 
@@ -45,6 +77,54 @@
             android:layout_height="wrap_content"
             android:hint="Enter post description"
             android:inputType="textCapWords"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/endDateTIL"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionTIL"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:endIconDrawable="@drawable/baseline_calendar_month_24"
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/endDateTIET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select end date"
+            android:inputType="textCapWords"
+            android:clickable="false"
+            android:enabled="false"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/endTimeTIL"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/endDateTIL"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:endIconDrawable="@drawable/baseline_access_time_24"
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/endTimeTIET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select end time"
+            android:inputType="textCapWords"
+            android:clickable="false"
+            android:enabled="false"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>

@@ -2,9 +2,11 @@ package pk.cust.events.homefragments;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -18,6 +20,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -217,17 +224,41 @@ public class EventDetailFragment extends Fragment {
             binding.eventDomain.setText(dataBundle.getString("post_domain"));
             binding.eventTopic.setText(dataBundle.getString("post_description"));
 
+            Log.e("end time date", String.valueOf(dataBundle.getLong("end_date_time")));
+            binding.endTime.setText("Event will close on: " + App.convertMillisToDateTime(dataBundle.getLong("end_date_time")));
             Glide.with(requireContext())
                     .load(dataBundle.getString("user_image"))
                     .error(R.drawable.baseline_broken_image_24)
                     .placeholder(R.drawable.profile)
                     .into(binding.personImage);
 
-            Glide.with(requireContext())
+            RequestOptions requestOptions = new RequestOptions()
+                    .timeout(60000); // Set the timeout to 60 seconds (adjust as needed)
+
+            Glide.with(requireActivity())
                     .load(dataBundle.getString("post_image"))
-                    .error(R.drawable.baseline_broken_image_24)
-                    .placeholder(R.drawable.baseline_broken_image_24)
+                    .error(R.drawable.baseline_account_circle_24)
+                    .placeholder(R.drawable.baseline_account_circle_24)
+                    .apply(requestOptions)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            // Handle load failure, show placeholder or error message
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            // Image loaded successfully
+                            return false;
+                        }
+                    })
                     .into(binding.eventImage);
+//            Glide.with(requireContext())
+//                    .load(dataBundle.getString("post_image"))
+//                    .error(R.drawable.baseline_broken_image_24)
+//                    .placeholder(R.drawable.baseline_broken_image_24)
+//                    .into(binding.eventImage);
 
             getLikeButtonStatus(dataBundle.getString("post_id"),
                     dataBundle.getString("user_id"));
@@ -291,7 +322,7 @@ public class EventDetailFragment extends Fragment {
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
                     binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-                    binding.closeChat.setVisibility(View.VISIBLE);
+//                    binding.closeChat.setVisibility(View.VISIBLE);
 
                     ChatRoomInvitationSender.getTokensFromFireStore(desc, domain, chatRoomId, postId);
 
@@ -407,7 +438,7 @@ public class EventDetailFragment extends Fragment {
 
                 Log.e("creator", creatorid + ",.,." + creator_name + ",.,." + creatorId);
                 if (!creatorId.equals(App.getString("document_id"))) {
-                    binding.closeChat.setVisibility(View.GONE);
+//                    binding.closeChat.setVisibility(View.GONE);
                     Log.e("is accepted11", creatorId + ",.," + isCreator);
                     if (App.IS_ACCEPTED_ROOM && Boolean.FALSE.equals(isCreator)) {
 
@@ -432,18 +463,18 @@ public class EventDetailFragment extends Fragment {
                         Log.e("creator001", creatorid + ",.,." + creator_name + ",.,." + creatorId);
 
                         binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-                        binding.closeChat.setVisibility(View.VISIBLE);
+//                        binding.closeChat.setVisibility(View.VISIBLE);
                     } else {
                         Log.e("creator002", creatorid + ",.,." + creator_name + ",.,." + creatorId);
 
                         binding.textLinearLayoutId.setVisibility(View.GONE);
-                        binding.closeChat.setVisibility(View.GONE);
+//                        binding.closeChat.setVisibility(View.GONE);
                         binding.chatTitle.setVisibility(View.GONE);
                     }
                 } else {
                     Log.e("creator003", creatorid + ",.,." + creator_name + ",.,." + creatorId);
 
-                    binding.closeChat.setVisibility(View.GONE);
+//                    binding.closeChat.setVisibility(View.GONE);
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
 //                    binding.textLinearLayoutId.setVisibility(View.GONE);

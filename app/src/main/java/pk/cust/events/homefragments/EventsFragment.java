@@ -40,9 +40,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventsFragment extends Fragment {
 
-   FragmentEventsBinding binding;
-   EventsAdapter eventsAdapter;
-   ArrayList<EventsModel> eventsModelArrayList = new ArrayList<>();
+    FragmentEventsBinding binding;
+    EventsAdapter eventsAdapter;
+    ArrayList<EventsModel> eventsModelArrayList = new ArrayList<>();
     List<String> domainsItems = new ArrayList<>();
 
     private FirebaseFirestore db;
@@ -113,14 +113,15 @@ public class EventsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedWord = domainsItems.get(position);
-                eventsAdapter.filter(selectedWord);
+                if (eventsAdapter != null)
+                    eventsAdapter.filter(selectedWord);
             }
-        });    }
+        });
+    }
 
-    public void hideSoftKeyboard()
-    {
+    public void hideSoftKeyboard() {
         //Hides the SoftKeyboard
-        InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 

@@ -133,9 +133,11 @@ public class ChatRoomFragment extends Fragment {
 
 
 //                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String userId = document.getString("userId");
-                        String description = document.getString("description");
-                        String imageUrl = document.getString("imageUrl");
+                    String userId = document.getString("userId");
+                    String description = document.getString("description");
+                    String imageUrl = document.getString("imageUrl");
+                    long startDateTime = document.getLong("start_date_time");
+                    long endDateTime = document.getLong("end_date_time");
 //                        String postId = document.getId();
 
 //                    }
@@ -158,6 +160,8 @@ public class ChatRoomFragment extends Fragment {
                                 bundle.putString("post_id", postId);
                                 bundle.putString("post_description", description);
                                 bundle.putString("post_domain", userDomain);
+                                bundle.putLong("start_date_time", startDateTime);
+                                bundle.putLong("end_date_time", endDateTime);
 
                                 App.IS_ACCEPTED_ROOM = true;
                                 // Assuming you're using Navigation Component to navigate

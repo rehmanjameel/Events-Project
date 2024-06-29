@@ -60,6 +60,10 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginUser.setOnClickListener(view -> {
             checkValidation();
         });
+
+        binding.forgotPassword.setOnClickListener(v -> {
+            startActivity(new Intent(this, ForgotPasswordActivity.class));
+        });
     }
 
     private void checkValidation() {

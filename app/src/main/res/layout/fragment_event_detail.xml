@@ -17,14 +17,13 @@
             android:orientation="vertical"
             android:weightSum="10">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/topLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                android:background="@drawable/background_gradient"
-                android:layout_weight="1">
+                android:background="@drawable/background_gradient">
 
                 <ImageView
                     android:id="@+id/backArrow"
@@ -33,6 +32,8 @@
                     android:src="@drawable/baseline_arrow_back_24"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
                     app:tint="@color/white" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -41,6 +42,8 @@
                     android:layout_height="40dp"
                     android:layout_margin="5dp"
                     android:src="@drawable/profile"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/backArrow"
                     app:civ_border_color="@color/purple_700"
                     app:civ_border_width="1dp" />
 
@@ -51,12 +54,25 @@
                     android:text="Name"
                     android:textSize="16sp"
                     android:textColor="@color/white"
-                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/personImage"
                     android:layout_marginEnd="10dp"/>
 
                 <TextView
+                    android:id="@+id/endTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textSize="16sp"
+                    android:textColor="@color/red"
+                    android:layout_gravity="center"
+                    android:layout_below="@id/personName"
+                    android:layout_toEndOf="@id/personImage"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
                     android:id="@+id/closeChat"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Close Chat"
                     android:textSize="18sp"
@@ -64,11 +80,12 @@
                     android:textStyle="bold"
                     android:gravity="end"
                     android:padding="10dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     android:layout_marginEnd="10dp"/>
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/imageDetailsLayout"

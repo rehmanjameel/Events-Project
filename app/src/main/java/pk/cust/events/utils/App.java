@@ -14,10 +14,19 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import java.io.File;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import pk.cust.events.services.DeleteExpiredEventsWorker;
 
 public class App extends Application {
 
@@ -43,6 +52,13 @@ public class App extends Application {
 
         context = getApplicationContext();
 //        createNotificationChannnel();
+
+        // Schedule the worker to run every 15 minutes
+        PeriodicWorkRequest deleteExpiredPostsWorkRequest =
+                new PeriodicWorkRequest.Builder(DeleteExpiredEventsWorker.class, 15, TimeUnit.SECONDS)
+                        .build();
+
+        WorkManager.getInstance(this).enqueue(deleteExpiredPostsWorkRequest);
     }
 
     public static Context getContext() {
@@ -154,6 +170,55 @@ public class App extends Application {
             Toast.makeText(context, "File already exists", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public String convertDateFormat(String inputDateString) {
+        try {
+            // Define the input date format
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("MMM dd, yyyy");
+
+            // Parse the input date string into a Date object
+            Date date = inputDateFormat.parse(inputDateString);
+
+            // Define the output date format
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            // Format the Date object into the desired output string
+            return outputDateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public long convertDateTimeToMilliseconds(String dateString, String timeString) {
+        try {
+            // Combine date and time strings
+            String dateTimeString = dateString + " " + timeString;
+
+            // Define the format of your date and time string
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            // Parse the date and time string into a Date object
+            Date date = dateFormat.parse(dateTimeString);
+
+            // Get the time in milliseconds
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static String convertMillisToDateTime(long milliSeconds)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
     // Check if location (GPS or network) is enabled

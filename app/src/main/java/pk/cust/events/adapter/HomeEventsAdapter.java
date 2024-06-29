@@ -187,21 +187,14 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
             bundle.putString("post_id", model.getPostId());
             bundle.putString("post_description", model.getDescription());
             bundle.putString("post_domain", model.getDomain());
+            bundle.putLong("start_date_time", model.getStartDateTime());
+            bundle.putLong("end_date_time", model.getEndDateTime());
 
             Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventDetailFragment, bundle);
 
         });
 
 
-    }
-
-    // Method to update like button icon based on the like state
-    private void updateLikeButtonIcon(ImageView likeButton, boolean isLiked) {
-        if (isLiked) {
-            likeButton.setImageResource(R.drawable.baseline_favorite_24); // Set filled heart icon when liked
-        } else {
-            likeButton.setImageResource(R.drawable.baseline_favorite_border_24); // Set outline heart icon when not liked
-        }
     }
 
     @Override
@@ -282,5 +275,15 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
                     });
         }
 
+    }
+
+    public void removeItem(String postId) {
+        for (int i = 0; i < eventsModels.size(); i++) {
+            if (eventsModels.get(i).getPostId().equals(postId)) {
+                eventsModels.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
     }
 }

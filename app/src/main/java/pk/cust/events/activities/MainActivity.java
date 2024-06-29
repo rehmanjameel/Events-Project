@@ -3,11 +3,19 @@ package pk.cust.events.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import pk.cust.events.adapter.HomeEventsAdapter;
 import pk.cust.events.databinding.ActivityMainBinding;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -19,7 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.concurrent.TimeUnit;
+
 import pk.cust.events.R;
+import pk.cust.events.services.DeleteExpiredEventsWorker;
 import pk.cust.events.utils.App;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,11 +38,14 @@ public class MainActivity extends AppCompatActivity {
    ActivityMainBinding binding;
     private NavController navController; // Declare the NavController
 
+    private HomeEventsAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
         // Find the NavHostFragment
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
@@ -124,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
     }
+
     @Override
     public void onBackPressed() {
 
