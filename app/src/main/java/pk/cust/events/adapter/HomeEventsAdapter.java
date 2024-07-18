@@ -188,7 +188,7 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Vi
             bundle.putString("post_description", model.getDescription());
             bundle.putString("post_domain", model.getDomain());
             bundle.putLong("start_date_time", model.getStartDateTime());
-            bundle.putLong("end_date_time", model.getEndDateTime());
+            bundle.putString("end_date_time", model.getEndDateTime());
 
             Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventDetailFragment, bundle);
 

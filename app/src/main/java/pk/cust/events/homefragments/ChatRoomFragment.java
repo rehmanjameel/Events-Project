@@ -99,23 +99,40 @@ public class ChatRoomFragment extends Fragment {
                                     Log.e("notifications get data0", title + " .,." + description);
                                     Log.e("notifications get data21", title + " .,." + snapshot.getId());
 
-                                    NotificationsModel notificationsModel = new NotificationsModel();
+                                    boolean isDuplicate = false;
 
-                                    notificationsModel.setId(invitationId);
-                                    notificationsModel.setName(title);
-                                    notificationsModel.setDescription(description);
-                                    notificationsModel.setChatId(chatId);
-                                    notificationsModel.setPostId(postId);
-                                    notificationsModelList.add(notificationsModel);
-                                    binding.progressbar.setVisibility(View.GONE);
+                                    for (NotificationsModel model : notificationsModelList) {
+                                        if (model.getDescription().equals(description)) {
+                                            isDuplicate = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!isDuplicate) {
+                                        NotificationsModel notificationsModel = new NotificationsModel();
+                                        notificationsModel.setId(invitationId);
+                                        notificationsModel.setName(title);
+                                        notificationsModel.setDescription(description);
+                                        notificationsModel.setChatId(chatId);
+                                        notificationsModel.setPostId(postId);
+                                        notificationsModelList.add(notificationsModel);
+                                    }
                                 }
                             }
 
                         }
                         Log.e("notifications get data023", String.valueOf(notificationsModelList.size()));
 
-                        adapter = new ChatInvitationAdapter(requireActivity(), notificationsModelList);
-                        binding.notificationsRV.setAdapter(adapter);
+                        if (!notificationsModelList.isEmpty()) {
+                            binding.progressbar.setVisibility(View.GONE);
+                            binding.noDataText.setVisibility(View.GONE);
+
+                            adapter = new ChatInvitationAdapter(requireActivity(), notificationsModelList);
+                            binding.notificationsRV.setAdapter(adapter);
+                        } else {
+                            binding.progressbar.setVisibility(View.GONE);
+                            binding.noDataText.setVisibility(View.VISIBLE);
+                        }
 
 
                     }
@@ -136,47 +153,54 @@ public class ChatRoomFragment extends Fragment {
                     String userId = document.getString("userId");
                     String description = document.getString("description");
                     String imageUrl = document.getString("imageUrl");
-                    long startDateTime = document.getLong("start_date_time");
-                    long endDateTime = document.getLong("end_date_time");
+                    long startDateTime;
+                    if (document.getLong("start_date_time") != null) {
+                        startDateTime = document.getLong("start_date_time");
+                    } else {
+                        startDateTime = 0;
+                    }
+                    String endDateTime = document.getString("end_date_time");
 //                        String postId = document.getId();
 
 //                    }
-                    // Retrieve additional user details from the 'users' collection
-                    Task<Object> userTask = db.collection("users")
-                            .document(userId)
-                            .get()
-                            .onSuccessTask(userDocument -> {
-                                String userName = userDocument.getString("user_name");
-                                String userImage = userDocument.getString("user_image");
-                                String userDomain = userDocument.getString("domain");
-                                Log.e("user name from posts", userName + ",.,." + userImage);
+                    if (userId != null) {
+                        // Retrieve additional user details from the 'users' collection
+                        Task<Object> userTask = db.collection("users")
+                                .document(userId)
+                                .get()
+                                .onSuccessTask(userDocument -> {
+                                    String userName = userDocument.getString("user_name");
+                                    String userImage = userDocument.getString("user_image");
+                                    String userDomain = userDocument.getString("domain");
+                                    Log.e("user name from posts", userName + ",.,." + userImage);
 
-                                Bundle bundle = new Bundle();
-                                bundle.putString("chatRoomId", chatRoomId);
-                                bundle.putString("user_name", userName);
-                                bundle.putString("user_image", userImage);
-                                bundle.putString("user_id", userId);
-                                bundle.putString("post_image", imageUrl);
-                                bundle.putString("post_id", postId);
-                                bundle.putString("post_description", description);
-                                bundle.putString("post_domain", userDomain);
-                                bundle.putLong("start_date_time", startDateTime);
-                                bundle.putLong("end_date_time", endDateTime);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("chatRoomId", chatRoomId);
+                                    bundle.putString("user_name", userName);
+                                    bundle.putString("user_image", userImage);
+                                    bundle.putString("user_id", userId);
+                                    bundle.putString("post_image", imageUrl);
+                                    bundle.putString("post_id", postId);
+                                    bundle.putString("post_description", description);
+                                    bundle.putString("post_domain", userDomain);
+                                    bundle.putLong("start_date_time", startDateTime);
+                                    bundle.putString("end_date_time", endDateTime);
 
-                                App.IS_ACCEPTED_ROOM = true;
-                                // Assuming you're using Navigation Component to navigate
-                                Navigation.findNavController(view)
-                                        .navigate(R.id.action_chatRoomFragment_to_eventDetailFragment, bundle);
-                                Log.e("user name from posts123", userName + ",.,." + userImage);
+                                    App.IS_ACCEPTED_ROOM = true;
+                                    // Assuming you're using Navigation Component to navigate
+                                    Navigation.findNavController(view)
+                                            .navigate(R.id.action_chatRoomFragment_to_eventDetailFragment, bundle);
+                                    Log.e("user name from posts123", userName + ",.,." + userImage);
 
-                                return Tasks.forResult(null);
-                            })
-                            .addOnFailureListener(e -> {
+                                    return Tasks.forResult(null);
+                                })
+                                .addOnFailureListener(e -> {
 //                                binding.progressbar.setVisibility(View.GONE);
-                                // Handle failure
-                            });
+                                    // Handle failure
+                                });
 
-                    tasks.add(userTask);
+                        tasks.add(userTask);
+                    }
 
                 })
                 .addOnFailureListener(e -> {
@@ -218,25 +242,28 @@ public class ChatRoomFragment extends Fragment {
             @Override
             public void run() {
 
-                adapter.setOnItemClickListener(new ChatInvitationAdapter.OnItemClickListener() {
-                    @Override
-                    public void onAcceptClick(String chatRoomId, String invitationId, String postId) {
-                        // Handle accept click
-                        joinChatRoom(chatRoomId, requireView(), postId);
-                        binding.progressbar.setVisibility(View.VISIBLE);
+                if (!notificationsModelList.isEmpty()) {
+                    adapter.setOnItemClickListener(new ChatInvitationAdapter.OnItemClickListener() {
+                        @Override
+                        public void onAcceptClick(String chatRoomId, String invitationId, String postId) {
+                            // Handle accept click
+                            joinChatRoom(chatRoomId, requireView(), postId);
+                            binding.progressbar.setVisibility(View.VISIBLE);
 //                        updateInvitationAcceptStatus(currentStudentDocumentId, invitationId);
-                    }
+                        }
 
-                    @Override
-                    public void onRejectClick(String chatRoomId, String invitationId, String postId) {
-                        // Handle reject click
-                        // Remove invitation or handle rejection logic
-                        binding.progressbar.setVisibility(View.VISIBLE);
-                        updateInvitationAcceptStatus(currentStudentDocumentId, invitationId);
+                        @Override
+                        public void onRejectClick(String chatRoomId, String invitationId, String postId) {
+                            // Handle reject click
+                            // Remove invitation or handle rejection logic
+                            binding.progressbar.setVisibility(View.VISIBLE);
+                            updateInvitationAcceptStatus(currentStudentDocumentId, invitationId);
 
-                    }
-                });
+                        }
+                    });
+                }
             }
         }, 3000);
+
     }
 }

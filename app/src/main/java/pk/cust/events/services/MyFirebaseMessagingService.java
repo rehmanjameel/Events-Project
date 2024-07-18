@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -144,6 +145,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Replace "currentStudentDocumentId" with the actual document ID of the current student
         String currentStudentDocumentId = App.getString("document_id"); // Implement this method to get the document ID of the current student
         if (currentStudentDocumentId != null) {
+
             db.collection("users").document(currentStudentDocumentId).collection("chatinvitation")
                     .add(userNotification)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

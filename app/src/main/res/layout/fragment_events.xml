@@ -33,7 +33,7 @@
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EventSpace"
+            android:text="Event Space"
             android:layout_marginStart="10dp"
             android:textColor="@color/white"
             android:textSize="24sp"
@@ -116,7 +116,7 @@
         android:id="@+id/noDataText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Event found"
+        android:text="No Trending Event found"
         android:visibility="gone"
         android:textColor="@color/purple_700"
         android:layout_centerInParent="true"/>

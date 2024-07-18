@@ -134,7 +134,7 @@ public class HomeFragment extends Fragment {
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
                         long startDateTime = document.getLong("start_date_time");
-                        long endDateTime = document.getLong("end_date_time");
+                        String endDateTime = document.getString("end_date_time");
 
                         Log.e("userid from posts", userId + ",.,." + description + ",.,." + imageUrl);
 
@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment {
 
         // Schedule the worker to run periodically
         PeriodicWorkRequest deleteExpiredPostsWorkRequest =
-                new PeriodicWorkRequest.Builder(DeleteExpiredEventsWorker.class, 10, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(DeleteExpiredEventsWorker.class, 15, TimeUnit.SECONDS)
                         .build();
 
         WorkManager.getInstance(requireActivity()).enqueue(deleteExpiredPostsWorkRequest);

@@ -1,7 +1,10 @@
 package pk.cust.events.activities;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
@@ -16,11 +19,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -92,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         // hide bottom bar
         hideBottomBar();
 
+        checkForNotificationPermission();
+
     }
 
     private void getFCMToken() {
@@ -160,4 +167,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void checkForNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            String permission = android.Manifest.permission.POST_NOTIFICATIONS;
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+//
+                requestNotificationPermission.launch(permission);
+            }
+        }
+    }
+
+    private ActivityResultLauncher<String> requestNotificationPermission =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) {
+//                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Go to the app info and enable notifications to receive the notifications", Toast.LENGTH_SHORT).show();
+
+                }
+            });
 }

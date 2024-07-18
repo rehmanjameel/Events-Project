@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -38,7 +39,6 @@ public class DeleteExpiredEventsWorker extends Worker {
         long currentTime = System.currentTimeMillis();
 
         db.collection("posts")
-                .whereLessThanOrEqualTo("end_date_time", currentTime)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -47,21 +47,33 @@ public class DeleteExpiredEventsWorker extends Worker {
                             List<DocumentSnapshot> documents = snapshot.getDocuments();
                             for (DocumentSnapshot document : documents) {
                                 String postId = document.getId();
-                                String imageUrl = document.getString("imageUrl");
+                                String endDateTimeString = document.getString("end_date_time");
 
-                                // Delete the post document
-                                deletePostDocument(db, postId);
+                                if (endDateTimeString != null) {
+                                    try {
+                                        long endDateTime = Long.parseLong(endDateTimeString);
+                                        if (endDateTime <= currentTime) {
+                                            String imageUrl = document.getString("imageUrl");
 
-                                // Delete the image from storage
-                                if (imageUrl != null && !imageUrl.isEmpty()) {
-                                    deleteImageFromStorage(storage, imageUrl);
+                                            // Delete the post document
+                                            deletePostDocument(db, postId);
+
+                                            // Delete the image from storage
+                                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                                deleteImageFromStorage(storage, imageUrl);
+                                            }
+
+                                            deleteInvitations(db, postId);
+                                            // Delete the like document
+                                            deleteLikeDocument(db, postId);
+
+                                            // Delete the chat document and its sub-collection
+                                            deleteChatDocument(db, postId);
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        Log.e("tasks", "Failed to parse end_date_time: " + endDateTimeString, e);
+                                    }
                                 }
-
-                                // Delete the like document
-                                deleteLikeDocument(db, postId);
-
-                                // Delete the chat document and its sub-collection
-                                deleteChatDocument(db, postId);
                             }
                         } else {
                             Log.e("tasks", "No documents found to delete.");
@@ -72,6 +84,47 @@ public class DeleteExpiredEventsWorker extends Worker {
                 });
 
         return Result.success();
+    }
+
+    private void deleteInvitations(FirebaseFirestore db, String postId) {
+        db.collection("users").get().addOnCompleteListener(task -> {
+           if (task.isSuccessful()) {
+               for (QueryDocumentSnapshot snapshot: task.getResult()) {
+                   // Get the user's chatinvitation subcollection and find documents with the specified post_id
+                   db.collection("users")
+                           .document(snapshot.getId())
+                           .collection("chatinvitation")
+                           .whereEqualTo("post_id", postId)
+                           .get()
+                           .addOnCompleteListener(chatTask -> {
+                               if (chatTask.isSuccessful()) {
+                                   for (QueryDocumentSnapshot chatDoc : chatTask.getResult()) {
+                                       // Delete each document with the specified post_id
+                                       db.collection("users")
+                                               .document(snapshot.getId())
+                                               .collection("chatinvitation")
+                                               .document(chatDoc.getId())
+                                               .delete()
+                                               .addOnSuccessListener(aVoid -> {
+                                                   // Log success if needed
+                                                   Log.d("deleteInvitations", "DocumentSnapshot successfully deleted!");
+                                               })
+                                               .addOnFailureListener(e -> {
+                                                   // Log failure if needed
+                                                   Log.w("deleteInvitations", "Error deleting document", e);
+                                               });
+                                   }
+                               } else {
+                                   // Log error if fetching chat invitations failed
+                                   Log.w("deleteInvitations", "Error getting chat invitations.", chatTask.getException());
+                               }
+                           });
+               }
+           }  else {
+               Log.w("deleteInvitations", "Error getting users.", task.getException());
+
+           }
+        });
     }
 
     private void deletePostDocument(FirebaseFirestore db, String postId) {

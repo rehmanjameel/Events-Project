@@ -109,11 +109,14 @@ public class ProfileActivity extends AppCompatActivity {
                         String userId =  document.getString("userId");
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
+                        long startDateTime = document.getLong("start_date_time");
+                        String endDateTime = document.getString("end_date_time");
 
                         Log.e("userid from posts", userId + ",.,." + description + ",.,." + imageUrl);
 
                         if (userId.equals(App.getString("document_id"))) {
-                            eventsModelArrayList.add(new EventsModel(userId, "", "", imageUrl, description, "", document.getId()));
+                            eventsModelArrayList.add(new EventsModel(userId, "", "", imageUrl, description, "", document.getId(),
+                                    startDateTime, endDateTime));
 
                         }
                     }

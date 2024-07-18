@@ -163,8 +163,11 @@ public class EventsFragment extends Fragment {
                         String userId = document.getString("userId");
                         String description = document.getString("description");
                         String imageUrl = document.getString("imageUrl");
+                        long startDateTime = document.getLong("start_date_time");
+                        String endDateTime = document.getString("end_date_time");
                         String postId = document.getId();
 
+                        Log.e("user id events all", userId);
                         Task<Object> userTask = db.collection("users")
                                 .document(userId)
                                 .get()
@@ -175,13 +178,16 @@ public class EventsFragment extends Fragment {
                                             String userName = userDocument.getString("user_name");
                                             String userImage = userDocument.getString("user_image");
                                             String userDomain = userDocument.getString("domain");
+                                            Log.e("user id events all", userDomain);
+
                                             int totalLikes = 0;
                                             if (document.contains("total_likes")) {
                                                 totalLikes = document.getLong("total_likes").intValue();
                                             }
                                             // Add event only if total likes > 0
                                             if (totalLikes > 1) {
-                                                eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId));
+                                                eventsModelArrayList.add(new EventsModel(userId, userName, userImage, imageUrl, description, userDomain, postId,
+                                                        startDateTime, endDateTime));
                                             }
                                         } else {
                                             Log.e("Error", "User document does not exist");

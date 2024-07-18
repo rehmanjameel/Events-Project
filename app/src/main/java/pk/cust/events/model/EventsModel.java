@@ -8,8 +8,11 @@ public class EventsModel {
     String eventTitle;
     String eventDomain;
     String postId;
+    long startDateTime;
+    String endDateTime;
 
-    public EventsModel(String id, String personName, String personImage, String eventImage, String eventTitle, String eventDomain, String postId) {
+    public EventsModel(String id, String personName, String personImage, String eventImage,
+                       String eventTitle, String eventDomain, String postId, long startDateTime, String endDateTime) {
         this.id = id;
         this.personName = personName;
         this.personImage = personImage;
@@ -17,6 +20,8 @@ public class EventsModel {
         this.eventTitle = eventTitle;
         this.eventDomain = eventDomain;
         this.postId = postId;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
     public String getId() {
@@ -74,5 +79,21 @@ public class EventsModel {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public long getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(long startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public String getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = endDateTime;
     }
 }

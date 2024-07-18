@@ -13,7 +13,7 @@ public class HomeEventsModel {
     private String imageUrl;
     private String domain;
     private long startDateTime;
-    private long endDateTime;
+    private String endDateTime;
 
 
 //    public HomeEventsModel(String userId, String userName, String userImage, String description,
@@ -91,11 +91,11 @@ public class HomeEventsModel {
         this.startDateTime = startDateTime;
     }
 
-    public long getEndDateTime() {
+    public String getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(long endDateTime) {
+    public void setEndDateTime(String endDateTime) {
         this.endDateTime = endDateTime;
     }
 }

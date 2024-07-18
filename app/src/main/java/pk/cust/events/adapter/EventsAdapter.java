@@ -94,14 +94,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             App.IS_ROOM_SPACE = true;
             Log.e("roomspace logs", String.valueOf(App.IS_ROOM_SPACE));
 
-            Bundle bundle = new Bundle();
-            bundle.putString("user_name", model.getPersonName());
-            bundle.putString("user_image", model.getPersonImage());
-            bundle.putString("user_id", model.getId());
-            bundle.putString("post_image", model.getEventImage());
-            bundle.putString("post_id", model.getPostId());
-            bundle.putString("post_description", model.getEventTitle());
-            bundle.putString("post_domain", model.getEventDomain());
+            Bundle bundle = getBundle(model);
             if (App.IS_PROFILE) {
                 if (mListener != null) {
                     mListener.onItemClick(bundle);
@@ -110,6 +103,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 Navigation.findNavController(view).navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle);
             }
         });
+    }
+
+    private static @NonNull Bundle getBundle(EventsModel model) {
+        Bundle bundle = new Bundle();
+        bundle.putString("user_name", model.getPersonName());
+        bundle.putString("user_image", model.getPersonImage());
+        bundle.putString("user_id", model.getId());
+        bundle.putString("post_image", model.getEventImage());
+        bundle.putString("post_id", model.getPostId());
+        bundle.putString("post_description", model.getEventTitle());
+        bundle.putString("post_domain", model.getEventDomain());
+        bundle.putLong("start_date_time", model.getStartDateTime());
+        bundle.putString("end_date_time", model.getEndDateTime());
+        return bundle;
     }
 
     @Override

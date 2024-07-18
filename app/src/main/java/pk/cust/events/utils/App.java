@@ -195,12 +195,29 @@ public class App extends Application {
         try {
             // Combine date and time strings
             String dateTimeString = dateString + " " + timeString;
+            Date currentDate = new Date();
+            SimpleDateFormat curDate = new SimpleDateFormat("yyyy-MM-dd");
+
+            String dateTimeString1 = curDate.format(currentDate) + " " + timeString;
 
             // Define the format of your date and time string
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            SimpleDateFormat dateFormat = null;
+            Date date;
+            if (timeString.isEmpty()) {
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                // Parse the date and time string into a Date object
+                date = dateFormat.parse(dateString);
+            } else if (dateString.isEmpty()) {
 
-            // Parse the date and time string into a Date object
-            Date date = dateFormat.parse(dateTimeString);
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                date = dateFormat.parse(dateTimeString1);
+
+            } else {
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                date = dateFormat.parse(dateTimeString);
+
+            }
+
 
             // Get the time in milliseconds
             return date.getTime();

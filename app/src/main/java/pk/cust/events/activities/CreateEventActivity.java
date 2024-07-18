@@ -118,12 +118,14 @@ public class CreateEventActivity extends AppCompatActivity {
 
         if (description.isEmpty()) {
             binding.descriptionTIET.setError("Field required");
-        } else if (endDate.isEmpty()) {
-            binding.endDateTIET.setError("Field required");
-
-        } else if (endTime.isEmpty()) {
-            binding.endTimeTIET.setError("Field required");
-        } else if (imageUri == null) {
+        }
+//        else if (endDate.isEmpty()) {
+//            binding.endDateTIET.setError("Field required");
+//
+//        } else if (endTime.isEmpty()) {
+//            binding.endTimeTIET.setError("Field required");
+//        }
+        else if (imageUri == null) {
             Toast.makeText(this, "Please select the image", Toast.LENGTH_LONG).show();
         } else {
             binding.progressbar.setVisibility(View.VISIBLE);
@@ -209,8 +211,13 @@ public class CreateEventActivity extends AppCompatActivity {
             post.put("description", description);
             post.put("imageUrl", postImage);
             post.put("start_date_time", System.currentTimeMillis());
-            post.put("end_date_time", app.convertDateTimeToMilliseconds(binding.endDateTIET.getText().toString(),
-                    binding.endTimeTIET.getText().toString()));
+            if (!binding.endDateTIET.getText().toString().isEmpty() ||
+                    !binding.endTimeTIET.getText().toString().isEmpty()) {
+                post.put("end_date_time", String.valueOf(app.convertDateTimeToMilliseconds(binding.endDateTIET.getText().toString(),
+                        binding.endTimeTIET.getText().toString())));
+            } else {
+                post.put("end_date_time", "");
+            }
             // Add other fields as needed
 
             db.collection("posts")
@@ -228,7 +235,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                         String descriptionRetrieved = documentSnapshot.getString("description");
                                         String imageUrlRetrieved = documentSnapshot.getString("imageUrl");
                                         long startDateTime = documentSnapshot.getLong("start_date_time");
-                                        long endDateTime = documentSnapshot.getLong("end_date_time");
+                                        String endDateTime = documentSnapshot.getString("end_date_time");
 
                                         // Log or use the post details as needed
                                         Log.d("PostDetails", "Post: " + postDetails);
@@ -252,7 +259,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                                     bundle.putString("post_description", descriptionRetrieved);
                                                     bundle.putString("post_domain", userDomain);
                                                     bundle.putLong("start_date_time", startDateTime);
-                                                    bundle.putLong("end_date_time", endDateTime);
+                                                    bundle.putString("end_date_time", endDateTime);
 
                                                     App.IS_CHAT_FROM_HOME = true;
 
@@ -267,7 +274,12 @@ public class CreateEventActivity extends AppCompatActivity {
                                                     binding.progressbar.setVisibility(View.GONE);
                                                     // Handle failure
                                                 });
-                                        getTokensFromFirestore(App.getString("user_name"), description);
+                                        if (!endDateTime.isEmpty()) {
+                                            getTokensFromFirestore(App.getString("user_name"), description + ". This event will end on " +
+                                                    App.convertMillisToDateTime(Long.parseLong(endDateTime)));
+                                        } else
+                                            getTokensFromFirestore(App.getString("user_name"), description + ".\n This event will stay permanently...");
+
                                         Toast.makeText(this, "Post uploaded successfully!", Toast.LENGTH_LONG).show();
                                         // onBackPressed();
                                     } else {

@@ -1,5 +1,6 @@
 package pk.cust.events.homefragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 
 import pk.cust.events.R;
@@ -49,6 +50,7 @@ import pk.cust.events.model.MessageModel;
 import pk.cust.events.utils.App;
 import pk.cust.events.utils.ChatRoomInvitationSender;
 
+@SuppressLint("SetTextI18n")
 public class EventDetailFragment extends Fragment {
 
     private FragmentEventDetailBinding binding;
@@ -74,27 +76,17 @@ public class EventDetailFragment extends Fragment {
         if (bundle != null) {
             updateData(bundle);
 
-//            if (!App.IS_ROOM_SPACE) {
-                if (App.IS_ACCEPTED_ROOM) {
-                    Log.e("check wtf", bundle.getString("user_id"));
-                    Log.e("profile logs1005", String.valueOf(App.IS_ACCEPTED_ROOM));
-                    checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), bundle.getString("post_id"),
-                            bundle.getString("user_id"));
-                } else {
-                    Log.e("check wtf01", bundle.getString("user_id"));
-                    Log.e("profile logs10005", String.valueOf(App.IS_ACCEPTED_ROOM));
-
-                    checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
-                            bundle.getString("user_id"));
-                }
-//            }
+            if (App.IS_ACCEPTED_ROOM) {
+                checkIfCurrentUserIsCreator(bundle.getString("chatRoomId"), bundle.getString("post_id"),
+                        bundle.getString("user_id"));
+            } else {
+                checkIfCurrentUserIsCreator("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
+                        bundle.getString("user_id"));
+            }
 
         }
-        Log.e("profile logs12", String.valueOf(App.IS_PROFILE));
 
         if (App.IS_ROOM_SPACE) {
-            Log.e("profile logs13", String.valueOf(App.IS_PROFILE));
-
 
             binding.backArrow.setOnClickListener(view -> {
                 App.IS_ROOM_SPACE = false;
@@ -115,7 +107,6 @@ public class EventDetailFragment extends Fragment {
                 App.IS_PROFILE = false;
                 Intent intent = new Intent(requireActivity(), ProfileActivity.class);
                 startActivity(intent);
-//                requireActivity().finish();
             });
 
         }
@@ -140,29 +131,20 @@ public class EventDetailFragment extends Fragment {
             // For example, establish a connection to the chat room and load messages
             // You might use a chat SDK or implement your own chat functionality here
             // For demonstration purposes, we'll simply log the chatRoomId
-            Log.d("ChatRoomFragment", "Joining chat room: " + getChatRoomId);
             // Chat room created successfully
-//            binding.chatTitle.setVisibility(View.VISIBLE);
-//            binding.postChatRV.setVisibility(View.VISIBLE);
-//            binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-            Log.e("profile logs1003", String.valueOf(App.IS_PROFILE));
 
             fetchChatMessages(getChatRoomId);
         }
 
         if (chatRoomId != null) {
-            Log.e("profile logs10003", String.valueOf(App.IS_PROFILE));
-
             fetchChatMessages(chatRoomId);
         } else {
-            Log.e("profile logs14", String.valueOf(App.IS_PROFILE));
             if (!App.IS_ROOM_SPACE) {
                 binding.chatTitle.setVisibility(View.GONE);
                 fetchChatMessages("chat_" + bundle.getString("post_id"));
             }
         }
         binding.closeChat.setOnClickListener(v -> {
-            Log.e("button close chat", "isclicked??");
             updateCurrentUserInChatRoom("chat_" + bundle.getString("post_id"), bundle.getString("post_id"),
                     bundle.getString("user_id"));
         });
@@ -224,8 +206,12 @@ public class EventDetailFragment extends Fragment {
             binding.eventDomain.setText(dataBundle.getString("post_domain"));
             binding.eventTopic.setText(dataBundle.getString("post_description"));
 
-            Log.e("end time date", String.valueOf(dataBundle.getLong("end_date_time")));
-            binding.endTime.setText("Event will close on: " + App.convertMillisToDateTime(dataBundle.getLong("end_date_time")));
+            if (!Objects.requireNonNull(dataBundle.getString("end_date_time")).isEmpty()) {
+                binding.endTime.setText("Event will close on: " +
+                        App.convertMillisToDateTime(Long.parseLong(dataBundle.getString("end_date_time"))));
+            } else {
+                binding.endTime.setText("");
+            }
             Glide.with(requireContext())
                     .load(dataBundle.getString("user_image"))
                     .error(R.drawable.baseline_broken_image_24)
@@ -242,23 +228,18 @@ public class EventDetailFragment extends Fragment {
                     .apply(requestOptions)
                     .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                             // Handle load failure, show placeholder or error message
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                             // Image loaded successfully
                             return false;
                         }
                     })
                     .into(binding.eventImage);
-//            Glide.with(requireContext())
-//                    .load(dataBundle.getString("post_image"))
-//                    .error(R.drawable.baseline_broken_image_24)
-//                    .placeholder(R.drawable.baseline_broken_image_24)
-//                    .into(binding.eventImage);
 
             getLikeButtonStatus(dataBundle.getString("post_id"),
                     dataBundle.getString("user_id"));
@@ -282,21 +263,23 @@ public class EventDetailFragment extends Fragment {
                             binding.likeIcon.setImageResource(R.drawable.baseline_favorite_24);
                             binding.likeIcon.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.red), PorterDuff.Mode.SRC_IN);
 
-                            int totalLikes = documentSnapshot.getData().size();
+                            int totalLikes = Objects.requireNonNull(documentSnapshot.getData()).size();
                             binding.eventLikes.setText(totalLikes + " likes");
                         } else {
                             // User has not liked the post
                             binding.likeIcon.setImageResource(R.drawable.baseline_favorite_border_24);
                             binding.likeIcon.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.white), PorterDuff.Mode.SRC_IN);
 
-                            int totalLikes = documentSnapshot.getData().size();
+                            int totalLikes = Objects.requireNonNull(documentSnapshot.getData()).size();
                             binding.eventLikes.setText(totalLikes + " likes");
                         }
                     } else {
+                        Log.e("else", "likes document not exist");
                         // Document doesn't exist, meaning no likes for this post yet
                         // Handle accordingly, e.g., set default like button state
                     }
                 } else {
+                    Log.e("else", "task not succeeded");
                     // Error occurred, handle it accordingly
                 }
             }
@@ -322,7 +305,6 @@ public class EventDetailFragment extends Fragment {
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
                     binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-//                    binding.closeChat.setVisibility(View.VISIBLE);
 
                     ChatRoomInvitationSender.getTokensFromFireStore(desc, domain, chatRoomId, postId);
 
@@ -342,8 +324,6 @@ public class EventDetailFragment extends Fragment {
                         // Add the message to the local list of messages
                         fetchChatMessages(chatRoomId);
 
-
-                        Log.d("SendMessage", "Message sent successfully");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -368,13 +348,13 @@ public class EventDetailFragment extends Fragment {
 
                     // Process the chat messages received from Firestore
                     List<MessageModel> chatMessages = new ArrayList<>();
-                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                        MessageModel message = document.toObject(MessageModel.class);
-                        Log.e("message model class", message.getMessageText().toString());
-                        messageList.add(message);
+                    if (querySnapshot != null) {
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            MessageModel message = document.toObject(MessageModel.class);
+                            messageList.add(message);
 
-
-                        chatMessages.add(message);
+                            chatMessages.add(message);
+                        }
                     }
 
                     // Update the UI to display the chat messages
@@ -385,24 +365,14 @@ public class EventDetailFragment extends Fragment {
     private void displayChatMessages(List<MessageModel> chatMessages) {
         // Initialize RecyclerView if not already initialized
 
-        if (binding.postChatRV == null) {
-        }
-        Log.e("is rv", "entered here?" + chatMessages.size());
-//            LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
-//            binding.postChatRV.setLayoutManager(layoutManager);
         messageAdapter = new MessageAdapter(chatMessages, App.getString("document_id")); // Pass your user ID here
         binding.postChatRV.setAdapter(messageAdapter);
-//                         Notify the adapter that a new message has been added
+//      Notify the adapter that a new message has been added
         int position = chatMessages.size() - 1;
 
         // Scroll the RecyclerView to the bottom to show the new message
         binding.postChatRV.scrollToPosition(position);
         messageAdapter.notifyItemInserted(position);
-        // Update the chat messages data in the adapter
-//        if (messageAdapter != null) {
-//            messageAdapter.setMessageList(chatMessages);
-//            messageAdapter.notifyDataSetChanged();
-//        }
     }
 
     // end the chat...
@@ -425,7 +395,6 @@ public class EventDetailFragment extends Fragment {
 
     private void checkIfCurrentUserIsCreator(String chatRoomId, String postId, String creatorId) {
         // Reference to the chat room document in Firestore
-        Log.e("check wtf01", "bundle.getString(\"user_id\")  " + chatRoomId);
         DocumentReference chatRoomRef = db.collection("Chats").document(chatRoomId);
 
         // Retrieve the document data
@@ -438,21 +407,11 @@ public class EventDetailFragment extends Fragment {
 
                 Log.e("creator", creatorid + ",.,." + creator_name + ",.,." + creatorId);
                 if (!creatorId.equals(App.getString("document_id"))) {
-//                    binding.closeChat.setVisibility(View.GONE);
-                    Log.e("is accepted11", creatorId + ",.," + isCreator);
-                    if (App.IS_ACCEPTED_ROOM && Boolean.FALSE.equals(isCreator)) {
-
-                        binding.textLinearLayoutId.setVisibility(View.GONE);
-
-                    } else {
-                        binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-                    }
-                    Log.e("is accepted12", creatorId);
+                    binding.textLinearLayoutId.setVisibility(View.VISIBLE);
 
                 }
                 // Check if the current user's ID exists as a key in the document
                 if (documentSnapshot.contains(postId)) {
-                    Log.e("check wtf010", creatorId);
                     // Retrieve the boolean value associated with the current user's ID
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
@@ -460,24 +419,26 @@ public class EventDetailFragment extends Fragment {
                         // Current user is the creator of the chat room
                         // Show the option to close the chat
                         // For example:
-                        Log.e("creator001", creatorid + ",.,." + creator_name + ",.,." + creatorId);
 
-                        binding.textLinearLayoutId.setVisibility(View.VISIBLE);
-//                        binding.closeChat.setVisibility(View.VISIBLE);
+                        if (App.IS_ROOM_SPACE || App.IS_PROFILE) {
+
+                            Log.e("is room space", String.valueOf(App.IS_ROOM_SPACE));
+                            binding.textLinearLayoutId.setVisibility(View.GONE);
+                            binding.chatTitle.setVisibility(View.GONE);
+
+                        } else {
+                            Log.e("is room space", String.valueOf(App.IS_ROOM_SPACE));
+
+                            binding.textLinearLayoutId.setVisibility(View.VISIBLE);
+
+                        }
                     } else {
-                        Log.e("creator002", creatorid + ",.,." + creator_name + ",.,." + creatorId);
-
                         binding.textLinearLayoutId.setVisibility(View.GONE);
-//                        binding.closeChat.setVisibility(View.GONE);
                         binding.chatTitle.setVisibility(View.GONE);
                     }
                 } else {
-                    Log.e("creator003", creatorid + ",.,." + creator_name + ",.,." + creatorId);
-
-//                    binding.closeChat.setVisibility(View.GONE);
                     binding.chatTitle.setVisibility(View.VISIBLE);
                     binding.postChatRV.setVisibility(View.VISIBLE);
-//                    binding.textLinearLayoutId.setVisibility(View.GONE);
                 }
             } else {
                 if (App.IS_CHAT_FROM_HOME) {
@@ -486,7 +447,7 @@ public class EventDetailFragment extends Fragment {
                             bundle.getString("user_name"), bundle.getString("post_domain"),
                             bundle.getString("post_description"));
                 } else {
-
+                    Log.e("chat: ", "not from home");
                 }
             }
         }).addOnFailureListener(e -> {
