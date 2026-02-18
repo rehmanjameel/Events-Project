@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_700"
-    tools:context="pk.cust.events.activities.CreateEventActivity">
+    tools:context="pk.custuni.eventsapp.activities.CreateEventActivity">
 
     <RelativeLayout
         android:id="@+id/topLayout"

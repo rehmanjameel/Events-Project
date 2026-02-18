@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_700"
-    tools:context="pk.cust.events.activities.RegistrationActivity">
+    tools:context="pk.custuni.eventsapp.activities.RegistrationActivity">
 
     <ScrollView
         android:layout_width="match_parent"
